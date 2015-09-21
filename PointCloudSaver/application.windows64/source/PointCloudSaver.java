@@ -1,0 +1,152 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import org.openkinect.freenect.*; 
+import org.openkinect.processing.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class PointCloudSaver extends PApplet {
+
+// Daniel Shiffman
+// Kinect Point Cloud example
+
+// https://github.com/shiffman/OpenKinect-for-Processing
+// http://shiffman.net/p5/kinect/
+
+
+
+
+// Kinect Library object
+Kinect kinect;
+
+// Angle for rotation
+float a = 0;
+
+// We'll use a lookup table so that we don't have to repeat the math over and over
+float[] depthLookUp = new float[2048];
+
+PrintWriter output;
+
+public void setup() {
+  String viewPointFileName;
+  viewPointFileName = "myPoints" + ".ply";
+  output = createWriter(dataPath(viewPointFileName)); 
+
+  // Rendering in P3D
+  size(800, 600, P3D);
+  kinect = new Kinect(this);
+  kinect.initDepth();
+
+  // Lookup table for all possible depth values (0 - 2047)
+  for (int i = 0; i < depthLookUp.length; i++) {
+    depthLookUp[i] = rawDepthToMeters(i);
+  }
+}
+
+public void draw() {
+
+  background(0);
+
+  GetPoints(false);
+  // Rotate
+  a += 0.015f;
+}
+
+//PVector points[];
+int counter = 0;
+public void GetPoints(boolean saving){
+int[] depth = kinect.getRawDepth();
+
+  // We're just going to calculate and draw every 4th pixel (equivalent of 160x120)
+  int skip = 4;
+
+  // Translate and rotate
+  translate(width/2, height/2, -50);
+  rotateY(a);
+  //points = new PVector[(kinect.width * kinect.height)/skip];
+  for (int x = 0; x < kinect.width; x += skip) {
+    for (int y = 0; y < kinect.height; y += skip) {
+      int offset = x + y*kinect.width;
+      
+      // Convert kinect data to world xyz coordinate
+      int rawDepth = depth[offset];
+      PVector v = depthToWorld(x, y, rawDepth);
+      
+      stroke(255);
+      pushMatrix();
+      // Scale up by 200
+      float factor = 200;
+      translate(v.x*factor, v.y*factor, factor-v.z*factor);
+      if(saving == true){
+      ExportPly(v);
+      counter++;
+      }
+      // Draw a point
+      point(0, 0);
+      popMatrix();
+    }
+  }
+}
+
+public void ExportPly(PVector v){
+      //PVector v  = new PVector(v.x *-1, v.y *-1, v.z*-1);
+      output.println(v.x*-1 +" "+ v.y*-1 +" "+(-v.z*-1) +" ");
+}
+
+public void keyPressed() {
+  output.println("ply");
+      output.println("format ascii 1.0");
+      output.println("comment this is my Proccessing file");
+      output.println("element vertex " + (19200));
+      output.println("property float x");
+      output.println("property float y");
+      output.println("property float z");
+      output.println("end_header");
+  GetPoints(true);
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  println(counter);
+  exit(); // Stops the program
+}
+
+// These functions come from: http://graphics.stanford.edu/~mdfisher/Kinect.html
+public float rawDepthToMeters(int depthValue) {
+  if (depthValue < 2047) {
+    return (float)(1.0f / ((double)(depthValue) * -0.0030711016f + 3.3309495161f));
+  }
+  return 0.0f;
+}
+
+public PVector depthToWorld(int x, int y, int depthValue) {
+
+  final double fx_d = 1.0f / 5.9421434211923247e+02f;
+  final double fy_d = 1.0f / 5.9104053696870778e+02f;
+  final double cx_d = 3.3930780975300314e+02f;
+  final double cy_d = 2.4273913761751615e+02f;
+
+  PVector result = new PVector();
+  double depth =  depthLookUp[depthValue];//rawDepthToMeters(depthValue);
+  result.x = (float)((x - cx_d) * depth * fx_d);
+  result.y = (float)((y - cy_d) * depth * fy_d);
+  result.z = (float)(depth);
+  return result;
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "PointCloudSaver" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}
