@@ -19,8 +19,6 @@ public class Player : MonoBehaviour {
 		Quaternion rotCube = kinectManager.GetUserOrientation(playerID, false);
 
 		transform.eulerAngles =  rotCube.eulerAngles;
-		transform.position = posPointMan*20;
-
-
+		transform.position =  new Vector3(posPointMan.x*20,0,posPointMan.z*20);
 	}
 }
