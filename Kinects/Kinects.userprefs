@@ -1,0 +1,17 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\KinectScripts\KinectManager.cs">
+    <Files>
+      <File FileName="Assets\Player.cs" Line="22" Column="37" />
+      <File FileName="Assets\KinectScripts\KinectManager.cs" Line="839" Column="2" />
+      <File FileName="Assets\KinectScripts\Cubeman\CubemanController.cs" Line="1" Column="1" />
+      <File FileName="Assets\GesturesDemo\Scripts\GestureListener.cs" Line="1" Column="1" />
+      <File FileName="..\..\GitHub\P2_BattleShip\P2 Networking\Assets\_scripts\NetworkManager.cs" Line="6" Column="2" />
+      <File FileName="Assets\NetworkManager.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
