@@ -36,10 +36,6 @@ public class NetworkManager : MonoBehaviour {
 		Debug.Log("Player " + playerID + " connected from " + player.ipAddress + ":" + player.port);
 		Debug.Log("Amount of players connected is " + Network.connections.Length);
 	}
-	[RPC]
-	void setPlayers(NetworkPlayer player, int _playerID){
-		players[_playerID -1] = player;
-	}
 	
 	void OnGUI()
 	{

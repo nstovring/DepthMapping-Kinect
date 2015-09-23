@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class Player : MonoBehaviour {
+public class Player : NetworkBehaviour{
 
 	KinectManager kinectManager;
     NetworkView myView;
@@ -10,8 +10,8 @@ public class Player : MonoBehaviour {
     NetworkIdentity myIdentity;
     PlayerController myPlayer;
 
-    Vector3[] joints1;
-    Vector3[] joints2;
+    public Vector3[] joints1;
+    public Vector3[] joints2;
     // Use this for initialization
     void Start () {
         myIdentity = GetComponent<NetworkIdentity>();
