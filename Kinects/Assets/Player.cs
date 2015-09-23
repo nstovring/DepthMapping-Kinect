@@ -13,13 +13,15 @@ public class Player : MonoBehaviour {
 	void Update () {
 		kinectManager = KinectManager.Instance;
 		uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
-		if(kinectManager.IsPlayerCalibrated(playerID)){
+		Debug.Log(kinectManager.IsPlayerCalibrated(playerID));
 
+		if(kinectManager.IsPlayerCalibrated(playerID)){
+		
 		Vector3 posPointMan = kinectManager.GetUserPosition(playerID);
 		Quaternion rotCube = kinectManager.GetUserOrientation(playerID, true);
 
 		transform.eulerAngles =  rotCube.eulerAngles;
-		transform.position =  new Vector3(posPointMan.x*20,0,posPointMan.z*20);
+		transform.position =  new Vector3(posPointMan.x*20, posPointMan.y, posPointMan.z*20);
 		}
 	}
 }

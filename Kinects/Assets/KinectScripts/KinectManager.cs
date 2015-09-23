@@ -173,7 +173,8 @@ public class KinectManager : MonoBehaviour
 	// List of Gesture Listeners. They must implement KinectGestures.GestureListenerInterface
 	public List<KinectGestures.GestureListenerInterface> gestureListeners;
 	
-	private Matrix4x4 kinectToWorld, flipMatrix;
+    //This could be the ticket, change this to public and see results
+	public Matrix4x4 kinectToWorld, flipMatrix;
 	private static KinectManager instance;
 	
     // Timer for controlling Filter Lerp blends.
