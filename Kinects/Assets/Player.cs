@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
 public class Player : MonoBehaviour {
 
 	KinectManager kinectManager;
-	// Use this for initialization
-	void Start () {
-	
+    NetworkView myView;
+    NetworkClient myClient;
+    NetworkIdentity myIdentity;
+    PlayerController myPlayer;
+
+    Vector3[] joints1;
+    Vector3[] joints2;
+    // Use this for initialization
+    void Start () {
+        myIdentity = GetComponent<NetworkIdentity>();
+        //myIdentity.
+	 ///myView = Network.
 	}
     public bool bothJointsTracked(uint userID, int Joint1, int Joint2)
     {
@@ -37,6 +47,7 @@ public class Player : MonoBehaviour {
             if(bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
             {
                 Vector3[] hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
+                CmdJointArray(hands,myIdentity.playerControllerId);
             }
 
 
@@ -44,4 +55,24 @@ public class Player : MonoBehaviour {
 		transform.position =  new Vector3(posPointMan.x*20, posPointMan.y, posPointMan.z*20);
 		}
 	}
+
+    /*public void SendJointArray(Vector3[] joints) {
+        myClient.Send
+        NetworkServer.SendToAll( joints);
+    }
+    */
+
+
+    [Command]
+    public void CmdJointArray(Vector3[] joints, int index) {
+
+        if (index == 0)
+        {
+            this.joints1 = joints;
+        }
+        if (index == 1)
+        {
+            this.joints2 = joints;
+        }
+    }
 }
