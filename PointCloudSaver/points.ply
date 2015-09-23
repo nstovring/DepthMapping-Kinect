@@ -1,5 +1,5 @@
 ply
-format ascii 1.D
+format ascii 1.0
 comment this is my Proccessing file
 element vertex 61440
 property float x
