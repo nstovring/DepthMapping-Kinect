@@ -15,8 +15,7 @@ public class Player : NetworkBehaviour{
     // Use this for initialization
     void Start () {
         myIdentity = GetComponent<NetworkIdentity>();
-        //myIdentity.
-	 ///myView = Network.
+       
 	}
     public bool bothJointsTracked(uint userID, int Joint1, int Joint2)
     {
@@ -43,10 +42,12 @@ public class Player : NetworkBehaviour{
 		
 		Vector3 posPointMan = kinectManager.GetUserPosition(playerID);
 		Quaternion rotCube = kinectManager.GetUserOrientation(playerID, true);
-            Debug.Log(kinectManager.GetJointPosition(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight));
             if(bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
             {
+               // Debug.Log(kinectManager.GetJointPosition(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight));
+
                 Vector3[] hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
+                Debug.Log(myIdentity.playerControllerId);
                 CmdJointArray(hands,myIdentity.playerControllerId);
             }
 
