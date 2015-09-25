@@ -10,7 +10,10 @@ public class Player : NetworkBehaviour {
     NetworkClient myClient;
     NetworkIdentity myIdentity;
     PlayerController myPlayer;
-    public Server server;
+    public OffsetCalculator server;
+    [SyncVar]
+    public string playerUniqueIdentity;
+    private NetworkInstanceId playerNetID;
 
     //public Vector3[] joints1;
     //public Vector3[] joints2;
@@ -65,9 +68,6 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    [SyncVar] public string playerUniqueIdentity;
-    private NetworkInstanceId playerNetID;
-
     public override void OnStartLocalPlayer()
     {
         GetNetIdentity();
@@ -80,9 +80,8 @@ public class Player : NetworkBehaviour {
 
     public override void OnStartClient()
     {
-        server = GameObject.FindGameObjectWithTag("Server").GetComponent<Server>();
+        server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
-
     private void SetIdentity()
     {
         if (isLocalPlayer) {
@@ -93,12 +92,12 @@ public class Player : NetworkBehaviour {
             transform.name = MakeUniqueIdentity();
         }
     }
-   
     private void GetNetIdentity()
     {
         playerNetID = GetComponent<NetworkIdentity>().netId;
         CmdTellServerMyIdentity(MakeUniqueIdentity());
     }
+
     [Command]
     private void CmdTellServerMyIdentity(string name)
     {
@@ -119,18 +118,18 @@ public class Player : NetworkBehaviour {
     public void CmdSetJointArray(Vector3[] joints, int index) {
         if (index == 1)
         {
-            this.joints[0] = joints[0];
-            this.joints[1] = joints[1];
-            //this.joints[0] = new Vector3(1, 1, 1);
-            //this.joints[1] = new Vector3(2, 2, 2);
+            //this.joints[0] = joints[0];
+            //this.joints[1] = joints[1];
+            this.joints[0] = new Vector3(1, 1, 1);
+            this.joints[1] = new Vector3(2, 2, 2);
             //this.joints1 = joints;
         }
         if (index == 2)
         {
-            this.joints[0] = joints[0];
-            this.joints[1] = joints[1];
-            //this.joints[0] = new Vector3(3, 3, 3);
-            //this.joints[1] = new Vector3(4, 4, 4);
+            //this.joints[0] = joints[0];
+            //this.joints[1] = joints[1];
+            this.joints[0] = new Vector3(3, 3, 3);
+            this.joints[1] = new Vector3(4, 4, 4);
             //this.joints2 = joints;
         }
 
