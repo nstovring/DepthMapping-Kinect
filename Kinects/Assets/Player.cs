@@ -6,23 +6,24 @@ using System;
 public class Player : NetworkBehaviour {
 
     KinectManager kinectManager;
-    NetworkView myView;
-    NetworkClient myClient;
-    NetworkIdentity myIdentity;
     PlayerController myPlayer;
     public OffsetCalculator server;
-    [SyncVar]
-    public string playerUniqueIdentity;
+    [SyncVar] public string playerUniqueIdentity;
     private NetworkInstanceId playerNetID;
 
-    //public Vector3[] joints1;
-    //public Vector3[] joints2;
+    public Vector3[] Hands;
+    private Vector3 rHandOff;
+    private Vector3 lHandOff;
 
-    public Vector3[] joints;
-    // Use this for initialization
+    [ClientRpc]
+    public void RpcSetOffset(Vector3 rHandOff, Vector3 lHandOff) {
+        this.rHandOff = rHandOff;
+        this.lHandOff = lHandOff;
+    }
+
     void Start () {
-        myIdentity = GetComponent<NetworkIdentity>();
-        myClient = new NetworkClient();
+        server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
+        
     }
     public bool bothJointsTracked(uint userID, int Joint1, int Joint2)
     {
@@ -39,31 +40,29 @@ public class Player : NetworkBehaviour {
         output[1] = kinectManager.GetJointPosition(userID, Joint2);
         return output;
     }
-    // Update is called once per frame
+    private Vector3[] hands;
 
-    public Vector3[] hands;
 
     [Client]
     void Update()
     {
-        if ((transform.name == "" || transform.name == "Player(Clone)")) {
+        if ((transform.name == "" || transform.name == "Player(Clone)"))
+        {
             transform.name = playerUniqueIdentity;
         }
-        CmdSetJointArray(hands, int.Parse(playerNetID.ToString()));
+        CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); // Testing line of code remove later
         kinectManager = KinectManager.Instance;
         uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
 
         if (kinectManager.IsPlayerCalibrated(playerID))
         {
-            Vector3 posPointMan = kinectManager.GetUserPosition(playerID);
-            Quaternion rotCube = kinectManager.GetUserOrientation(playerID, true);
+            Vector3 userPos = kinectManager.GetUserPosition(playerID);
+            Quaternion userRot = kinectManager.GetUserOrientation(playerID, true);
             if (bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
             {
                 hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
-                CmdSetJointArray(hands, int.Parse(playerNetID.ToString()));
-                CmdMoveCube(posPointMan, rotCube);
-                //transform.eulerAngles = rotCube.eulerAngles;
-                //transform.position = new Vector3(posPointMan.x * 20, posPointMan.y, posPointMan.z * 20);
+                CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); //Minus one because the OffsetCalculator has the number 1 netId
+                CmdMoveCube(userPos, userRot);
             }
         }
     }
@@ -75,12 +74,11 @@ public class Player : NetworkBehaviour {
 
         Debug.Log("Im connected!");
         print("Player ID is " + int.Parse(playerNetID.ToString()));
-        //myClient = new NetworkClient();
     }
 
     public override void OnStartClient()
     {
-        server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
+        //server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
     private void SetIdentity()
     {
@@ -105,7 +103,7 @@ public class Player : NetworkBehaviour {
     }
     private string MakeUniqueIdentity()
     {
-        return "Player " + playerNetID.ToString();
+        return "Player " + (int.Parse(playerNetID.ToString())-1);
     }
 
     [Command]
@@ -116,23 +114,23 @@ public class Player : NetworkBehaviour {
 
     [Command]
     public void CmdSetJointArray(Vector3[] joints, int index) {
+
+        //if statements irellevant during proper tests
         if (index == 1)
         {
             //this.joints[0] = joints[0];
             //this.joints[1] = joints[1];
-            this.joints[0] = new Vector3(1, 1, 1);
-            this.joints[1] = new Vector3(2, 2, 2);
+            this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
             //this.joints1 = joints;
         }
         if (index == 2)
         {
             //this.joints[0] = joints[0];
             //this.joints[1] = joints[1];
-            this.joints[0] = new Vector3(3, 3, 3);
-            this.joints[1] = new Vector3(4, 4, 4);
+            this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
             //this.joints2 = joints;
         }
-
-        //ClientSetJoints(joints, index);
     }
 }

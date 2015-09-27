@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class OffsetCalculator : MonoBehaviour {
+public class OffsetCalculator : NetworkBehaviour {
 
     public Vector3[] hands1;
     public Vector3[] hands2;
@@ -14,15 +14,11 @@ public class OffsetCalculator : MonoBehaviour {
 	
 	}
 
-    public void SetJoints(Vector3[] joints, int player)
+    [Command]
+    public void CmdSetOffsets(GameObject[] players)
     {
-        if (player == 1)
-        {
-            hands1 = joints;
-        }
-        if (player == 2)
-        {
-            hands2 = joints;
+        foreach (GameObject player in players) {
+            player.GetComponent<Player>().RpcSetOffset(offsetVectorRightHand, offsetVectorLeftHand);
         }
     }
 
@@ -31,19 +27,22 @@ public class OffsetCalculator : MonoBehaviour {
     }
 
 	// Update is called once per frame
+    [Server]
 	void Update () {
        players = GameObject.FindGameObjectsWithTag("Player");
 
-        if (players.Length > 1) {
-            offsetVectorRightHand = CalcOffset(hands1[0], hands1[0]);
-            offsetVectorLeftHand = CalcOffset(hands2[1], hands2[1]);
+        if (players.Length >= 2) {
+            Debug.Log("Calculating offsets!");
+            offsetVectorRightHand = CalcOffset(hands1[0], hands2[0]);
+            offsetVectorLeftHand = CalcOffset(hands1[1], hands2[1]);
+            CmdSetOffsets(players);
         }
 
         for( int i = 0; i< players.Length; i++) {
             if(i == 0)
-            hands1 = players[i].GetComponent<Player>().joints;
+            hands1 = players[i].GetComponent<Player>().Hands;
             if(i == 1)
-            hands2 = players[i].GetComponent<Player>().joints;
+            hands2 = players[i].GetComponent<Player>().Hands;
         }
     }
 }
