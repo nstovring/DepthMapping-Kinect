@@ -9,7 +9,7 @@ using System.Text;
 using UnityEngine.Networking;
 
 
-public class KinectManager : NetworkBehaviour
+public class KinectManager : MonoBehaviour
 {
 	public enum Smoothing : int { None, Default, Medium, Aggressive }
 	
@@ -860,10 +860,10 @@ public class KinectManager : NetworkBehaviour
 
     //----------------------------------- end of public functions --------------------------------------//
 
-    override public void OnStartClient() {
+    /*override public void OnStartClient() {
         StartKinect();
 
-    }
+    }*/
 
 	void StartKinect()
 	{

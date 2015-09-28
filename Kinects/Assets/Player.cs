@@ -71,7 +71,9 @@ public class Player : NetworkBehaviour {
     }
 
     private void CalibrateKinect() {
-        kinectManager.kinectToWorld.SetTRS(rHandOff, Quaternion.identity, Vector3.zero);
+        Quaternion quatTiltAngle = new Quaternion();
+        quatTiltAngle.eulerAngles = new Vector3(-kinectManager.SensorAngle, 0.0f, 0.0f);
+        kinectManager.kinectToWorld.SetTRS(rHandOff, quatTiltAngle, Vector3.one);
     }
 
     public override void OnStartLocalPlayer()
@@ -115,6 +117,14 @@ public class Player : NetworkBehaviour {
 
     [Command]
     public void CmdMoveCube(Vector3 position, Quaternion Rotation) {
+        transform.eulerAngles = Rotation.eulerAngles;
+        transform.position = new Vector3(position.x, position.y, position.z);
+        RpcMoveCube(position, Rotation);
+    }
+
+    [ClientRpc]
+    public void RpcMoveCube(Vector3 position, Quaternion Rotation)
+    {
         transform.eulerAngles = Rotation.eulerAngles;
         transform.position = new Vector3(position.x, position.y, position.z);
     }
