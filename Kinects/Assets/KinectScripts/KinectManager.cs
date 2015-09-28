@@ -12,8 +12,9 @@ using UnityEngine.Networking;
 public class KinectManager : MonoBehaviour
 {
 	public enum Smoothing : int { None, Default, Medium, Aggressive }
-	
-	
+
+
+    public bool identity;
 	// Public Bool to determine how many players there are. Default of one user.
 	public bool TwoUsers = false;
 	
@@ -994,13 +995,14 @@ public class KinectManager : MonoBehaviour
 
                 //create the transform matrix that converts from kinect-space to world-space
                 Quaternion quatTiltAngle = new Quaternion();
-                quatTiltAngle.eulerAngles = new Vector3(-SensorAngle, 0.0f, 0.0f);
+            quatTiltAngle.eulerAngles = new Vector3(0, 0, 0);///(-SensorAngle, 0.0f, 0.0f);
 
-                //float heightAboveHips = SensorHeight - 1.0f;
+            //float heightAboveHips = SensorHeight - 1.0f;
 
-                // transform matrix - kinect to world
-                //kinectToWorld.SetTRS(new Vector3(0.0f, heightAboveHips, 0.0f), quatTiltAngle, Vector3.one);
-                kinectToWorld.SetTRS(new Vector3(0.0f, SensorHeight, 0.0f), quatTiltAngle, Vector3.one);
+            // transform matrix - kinect to world
+            //kinectToWorld.SetTRS(new Vector3(0.0f, heightAboveHips, 0.0f), quatTiltAngle, Vector3.one);
+            if (identity)
+            kinectToWorld.SetTRS(new Vector3(0.0f, SensorHeight, 0.0f),  quatTiltAngle, Vector3.one);// quatTiltAngle, Vector3.one);
                 flipMatrix = Matrix4x4.identity;
                 flipMatrix[2, 2] = -1;
 
