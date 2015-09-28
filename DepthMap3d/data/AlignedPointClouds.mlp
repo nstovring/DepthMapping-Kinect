@@ -1,0 +1,22 @@
+<!DOCTYPE MeshLabDocument>
+<MeshLabProject>
+ <MeshGroup>
+  <MLMesh label="myPoints.ply" filename="myPoints.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="myPoints0.ply" filename="myPoints0.ply">
+   <MLMatrix44>
+0.702675 -0.337057 -0.62661 -1306.12 
+0.351106 0.930241 -0.106654 -288.285 
+0.618847 -0.145064 0.772 -424.438 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+ </MeshGroup>
+ <RasterGroup/>
+</MeshLabProject>
