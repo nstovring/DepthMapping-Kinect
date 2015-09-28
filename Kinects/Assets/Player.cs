@@ -64,6 +64,14 @@ public class Player : NetworkBehaviour {
                 CmdMoveCube(userPos, userRot);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.C)) {
+            CalibrateKinect();
+        }
+    }
+
+    private void CalibrateKinect() {
+        kinectManager.kinectToWorld.SetTRS(rHandOff, Quaternion.identity, Vector3.zero);
     }
 
     public override void OnStartLocalPlayer()
