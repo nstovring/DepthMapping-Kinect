@@ -7,7 +7,7 @@ public class Player : NetworkBehaviour {
 
     KinectManager kinectManager;
     PlayerController myPlayer;
-    public OffsetCalculator server;
+    public OffsetCalculator offsetCalc;
     [SyncVar] public string playerUniqueIdentity;
     private NetworkInstanceId playerNetID;
 
@@ -22,8 +22,7 @@ public class Player : NetworkBehaviour {
     }
 
     void Start () {
-        server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
-        
+        offsetCalc = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
     public bool bothJointsTracked(uint userID, int Joint1, int Joint2)
     {
@@ -50,7 +49,7 @@ public class Player : NetworkBehaviour {
         {
             transform.name = playerUniqueIdentity;
         }
-        CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); // Testing line of code remove later
+        //CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); // Testing line of code remove later
         kinectManager = KinectManager.Instance;
         uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
 
@@ -115,21 +114,22 @@ public class Player : NetworkBehaviour {
     [Command]
     public void CmdSetJointArray(Vector3[] joints, int index) {
 
+        //this.Hands = joints;
         //if statements irellevant during proper tests
         if (index == 1)
         {
-            //this.joints[0] = joints[0];
-            //this.joints[1] = joints[1];
-            this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
-            this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            this.Hands[0] = joints[0];
+            this.Hands[1] = joints[1];
+            //this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            //this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
             //this.joints1 = joints;
         }
         if (index == 2)
         {
-            //this.joints[0] = joints[0];
-            //this.joints[1] = joints[1];
-            this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
-            this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            this.Hands[0] = joints[0];
+            this.Hands[1] = joints[1];
+            //this.Hands[0] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
+            //this.Hands[1] = new Vector3(UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10), UnityEngine.Random.Range(0, 10));
             //this.joints2 = joints;
         }
     }
