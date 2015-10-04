@@ -1001,6 +1001,9 @@ public class KinectManager : MonoBehaviour
 
             // transform matrix - kinect to world
             //kinectToWorld.SetTRS(new Vector3(0.0f, heightAboveHips, 0.0f), quatTiltAngle, Vector3.one);
+         
+
+
             if (identity)
             kinectToWorld.SetTRS(new Vector3(0.0f, SensorHeight, 0.0f),  quatTiltAngle, Vector3.one);// quatTiltAngle, Vector3.one);
                 flipMatrix = Matrix4x4.identity;
@@ -1109,13 +1112,20 @@ public class KinectManager : MonoBehaviour
             KinectInitialized = true;
         //}
 	}
-	
-	void Update()
+
+
+    void Update()
 	{
         if (Input.GetKeyUp(KeyCode.S) && !KinectInitialized) {
             StartKinect();
         }
-		if(KinectInitialized)
+
+        /*f (!identity)
+        {
+            transform.position = MatrixFunk.ExtractTranslationFromMatrix(ref kinectToWorld);
+            transform.rotation = MatrixFunk.ExtractRotationFromMatrix(ref kinectToWorld);
+        }*/
+        if (KinectInitialized)
 		{
 			// needed by the KinectExtras' native wrapper to check for next frames
 			// uncomment the line below, if you use the Extras' wrapper, but none of the Extras' managers

@@ -70,6 +70,7 @@
      <Compile Include="Assets\KinectScripts\Samples\MouseControl.cs" />
      <Compile Include="Assets\KinectScripts\Samples\SetSceneAvatars.cs" />
      <Compile Include="Assets\KinectScripts\Samples\SimpleGestureListener.cs" />
+     <Compile Include="Assets\MatrixFunk.cs" />
      <Compile Include="Assets\NetworkManager.cs" />
      <Compile Include="Assets\OffsetCalculator.cs" />
      <Compile Include="Assets\OverlayDemo\Scripts\KinectOverlayer.cs" />

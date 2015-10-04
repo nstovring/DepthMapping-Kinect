@@ -32,12 +32,10 @@ public class OffsetCalculator : NetworkBehaviour {
        players = GameObject.FindGameObjectsWithTag("Player");
 
         if (players.Length >= 2) {
-            Debug.Log("Calculating offsets!");
             offsetVectorRightHand = CalcOffset(hands1[0], hands2[0]);
             offsetVectorLeftHand = CalcOffset(hands1[1], hands2[1]);
             CmdSetOffsets(players);
         }
-
         for( int i = 0; i< players.Length; i++) {
             if(i == 0)
             hands1 = players[i].GetComponent<Player>().Hands;
