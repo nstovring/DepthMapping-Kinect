@@ -866,7 +866,7 @@ public class KinectManager : MonoBehaviour
 
     }*/
 
-	void StartKinect()
+	public void StartKinect()
 	{
         //if (Network.isClient)
         //{

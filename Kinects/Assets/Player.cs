@@ -15,6 +15,9 @@ public class Player : NetworkBehaviour {
     private Vector3 rHandOff;
     private Vector3 lHandOff;
 
+
+    uint playerID;
+
     //Assigns the calculated offset to the r and lHandOff variables on the clients
     [ClientRpc]
     public void RpcSetOffset(Vector3 rHandOff, Vector3 lHandOff) {
@@ -52,65 +55,45 @@ public class Player : NetworkBehaviour {
         {
             transform.name = playerUniqueIdentity;
         }
-        //CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); // Testing line of code remove later
+        if (kinectManager.IsPlayerCalibrated(playerID))
+        {
+            MoveCube();
+        }
 
+        }
+    [Client]
+    private void MoveCube() {
         //Create individual void for the following if statements
         kinectManager = KinectManager.Instance;
         uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
-        
-        if (kinectManager.IsPlayerCalibrated(playerID))
-        {
+
             Vector3 userPos = kinectManager.GetUserPosition(playerID);
             Quaternion userRot = kinectManager.GetUserOrientation(playerID, true);
             //if (bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
-            //{
-                hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
-                //KinectWrapper.MapSkeletonPointToDepthPoint <----- Remember this!
-                CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); //Minus one because the OffsetCalculator has the number 1 netId
-                transform.eulerAngles = userRot.eulerAngles;
-                transform.position = new Vector3(userPos.x, userPos.y, userPos.z);
-            //CmdMoveCube(userPos, userRot);
-            //}
-        }
-        //(Unneccesary)
-        if (Input.GetKeyDown(KeyCode.C)) {
-            CalibrateKinect();
-        }
-    }
-    //Function to move the avatar in the scene (WIP) including the RpcMoveCube
-    //[Command]
-    public void CmdMoveCube(Vector3 position, Quaternion Rotation)
-    {
-        transform.eulerAngles = Rotation.eulerAngles;
-        transform.position = new Vector3(position.x, position.y, position.z);
-        //transform.position = kinectManager.kinectToWorld.MultiplyPoint3x4(position);
-        //RpcMoveCube(position, Rotation);
-    }
-    [ClientRpc]
-    public void RpcMoveCube(Vector3 position, Quaternion Rotation)
-    {
-        transform.eulerAngles = Rotation.eulerAngles;
-        transform.position = new Vector3(position.x, position.y, position.z);
-    }
-    //Temporary void no real application ATM
-    private void CalibrateKinect() {
-        Quaternion quatTiltAngle = new Quaternion();
-        quatTiltAngle.eulerAngles = new Vector3(-kinectManager.SensorAngle, 0.0f, 0.0f);
-        kinectManager.kinectToWorld.SetTRS(rHandOff, quatTiltAngle, Vector3.one);
+            hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
+            //KinectWrapper.MapSkeletonPointToDepthPoint <----- Remember this!
+            //CmdSetJointArray(hands, int.Parse(playerNetID.ToString()) - 1); //Minus one because the OffsetCalculator has the number 1 netId
+            transform.eulerAngles = userRot.eulerAngles;
+            transform.position = new Vector3(userPos.x, userPos.y, userPos.z);
+
     }
 
+  
     //Called on the client when connected to a server
     public override void OnStartLocalPlayer()
     {
         GetNetIdentity();
         SetIdentity();
-
+        kinectManager = KinectManager.Instance;
+        kinectManager.StartKinect();
+        playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
         Debug.Log("Im connected!");
         print("Player ID is " + (int.Parse(playerNetID.ToString())-1));
     }
     //Called on the client when connected to a server (redundant now)
     public override void OnStartClient()
     {
+
         //server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
 
