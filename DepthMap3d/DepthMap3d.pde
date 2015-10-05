@@ -23,7 +23,7 @@ PrintWriter output;
 void setup()
 {
   String viewPointFileName;
-  viewPointFileName = "myPoints" + ".ply";
+  viewPointFileName = "myPoints1" + ".ply";
   output = createWriter(dataPath(viewPointFileName)); 
   
   size(1024,768,P3D);
@@ -89,7 +89,7 @@ void GetPoints(boolean saving){
         // draw the projected point
 //        realWorldPoint = context.depthMapRealWorld()[index];
         realWorldPoint = realWorldMap[index];
-        vertex(realWorldPoint.x,realWorldPoint.y,realWorldPoint.z);  // make realworld z negative, in the 3d drawing coordsystem +z points in the direction of the eye
+        vertex(-realWorldPoint.x,realWorldPoint.y,realWorldPoint.z);  // make realworld z negative, in the 3d drawing coordsystem +z points in the direction of the eye
          if(saving == true){
           ExportPly(realWorldPoint);
           counter++;
@@ -106,7 +106,7 @@ void GetPoints(boolean saving){
 
 void ExportPly(PVector v){
       //PVector v  = new PVector(v.x *-1, v.y *-1, v.z*-1);
-      output.println(v.x +" "+ v.y +" "+(-v.z) +" ");
+      output.println((-v.x) +" "+ (v.y) +" "+(-v.z) +" ");
 }
 
 void keyPressed()
@@ -145,14 +145,14 @@ void keyPressed()
     break;
   }
   
-   output.println("ply");
-      output.println("format ascii 1.0");
-      output.println("comment this is my Proccessing file");
-      output.println("element vertex " + (23000));
-      output.println("property float x");
-      output.println("property float y");
-      output.println("property float z");
-      output.println("end_header");
+  output.println("ply");
+  output.println("format ascii 1.0");
+  output.println("comment this is my Proccessing file");
+  output.println("element vertex " + (28000));
+  output.println("property float x");
+  output.println("property float y");
+  output.println("property float z");
+  output.println("end_header");
   GetPoints(true);
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file

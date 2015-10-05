@@ -1,19 +1,19 @@
 <!DOCTYPE MeshLabDocument>
 <MeshLabProject>
  <MeshGroup>
-  <MLMesh label="myPoints.ply" filename="myPoints.ply">
+  <MLMesh label="myPoints2.ply" filename="myPoints2.ply">
+   <MLMatrix44>
+0.495517 0.0802771 0.864881 1114.9 
+-0.13154 0.991171 -0.0166359 -436.856 
+-0.85858 -0.105523 0.501702 -1045.66 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="myPoints1.ply" filename="myPoints1.ply">
    <MLMatrix44>
 1 0 0 0 
 0 1 0 0 
 0 0 1 0 
-0 0 0 1 
-</MLMatrix44>
-  </MLMesh>
-  <MLMesh label="myPoints0.ply" filename="myPoints0.ply">
-   <MLMatrix44>
-0.777815 0.0119307 -0.628379 -986.515 
-0.056923 0.994373 0.0893396 122.449 
-0.62591 -0.105259 0.77276 -381.676 
 0 0 0 1 
 </MLMatrix44>
   </MLMesh>
