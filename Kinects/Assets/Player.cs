@@ -22,6 +22,7 @@ public class Player : NetworkBehaviour {
         this.lHandOff = lHandOff;
     }
 
+    [Server]
     void Start () {
         offsetCalc = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
@@ -61,20 +62,36 @@ public class Player : NetworkBehaviour {
         {
             Vector3 userPos = kinectManager.GetUserPosition(playerID);
             Quaternion userRot = kinectManager.GetUserOrientation(playerID, true);
-            if (bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
-            {
+            //if (bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
+            //{
                 hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
                 //KinectWrapper.MapSkeletonPointToDepthPoint <----- Remember this!
                 CmdSetJointArray(hands, int.Parse(playerNetID.ToString())-1); //Minus one because the OffsetCalculator has the number 1 netId
-                CmdMoveCube(userPos, userRot);
-            }
+                transform.eulerAngles = userRot.eulerAngles;
+                transform.position = new Vector3(userPos.x, userPos.y, userPos.z);
+            //CmdMoveCube(userPos, userRot);
+            //}
         }
         //(Unneccesary)
         if (Input.GetKeyDown(KeyCode.C)) {
             CalibrateKinect();
         }
     }
-
+    //Function to move the avatar in the scene (WIP) including the RpcMoveCube
+    //[Command]
+    public void CmdMoveCube(Vector3 position, Quaternion Rotation)
+    {
+        transform.eulerAngles = Rotation.eulerAngles;
+        transform.position = new Vector3(position.x, position.y, position.z);
+        //transform.position = kinectManager.kinectToWorld.MultiplyPoint3x4(position);
+        //RpcMoveCube(position, Rotation);
+    }
+    [ClientRpc]
+    public void RpcMoveCube(Vector3 position, Quaternion Rotation)
+    {
+        transform.eulerAngles = Rotation.eulerAngles;
+        transform.position = new Vector3(position.x, position.y, position.z);
+    }
     //Temporary void no real application ATM
     private void CalibrateKinect() {
         Quaternion quatTiltAngle = new Quaternion();
@@ -127,20 +144,7 @@ public class Player : NetworkBehaviour {
         return "Player " + (int.Parse(playerNetID.ToString())-1); //Minus one because the OffsetCalculator has the number 1 netId
     }
 
-    //Function to move the avatar in the scene (WIP) including the RpcMoveCube
-    //[Command]
-    public void CmdMoveCube(Vector3 position, Quaternion Rotation) {
-        transform.eulerAngles = Rotation.eulerAngles;
-        transform.position = new Vector3(position.x, position.y, position.z);
-        //transform.position = kinectManager.kinectToWorld.MultiplyPoint3x4(position);
-        //RpcMoveCube(position, Rotation);
-    }
-    [ClientRpc]
-    public void RpcMoveCube(Vector3 position, Quaternion Rotation)
-    {
-        transform.eulerAngles = Rotation.eulerAngles;
-        transform.position = new Vector3(position.x, position.y, position.z);
-    }
+
 
     //Tells the server which joints are being tracked
     [Command]
