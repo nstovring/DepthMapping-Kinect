@@ -5,7 +5,7 @@ using System;
 
 public class Player : NetworkBehaviour {
 
-    KinectManager kinectManager;
+    public KinectManager kinectManager;
     PlayerController myPlayer;
     public OffsetCalculator offsetCalc;
     [SyncVar] public string playerUniqueIdentity;
@@ -25,10 +25,6 @@ public class Player : NetworkBehaviour {
         this.lHandOff = lHandOff;
     }
 
-    [Server]
-    void Start () {
-        offsetCalc = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
-    }
     public bool bothJointsTracked(uint userID, int Joint1, int Joint2)
     {
         if(kinectManager.IsJointTracked(userID, Joint1) && kinectManager.IsJointTracked(userID, Joint2))
@@ -50,51 +46,49 @@ public class Player : NetworkBehaviour {
     [Client]
     void Update()
     {
+        kinectManager = GetComponentInChildren<KinectManager>();
+        uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
+
         //Change the name of the spawned Player gameObject --> Move this to start or awake
         if ((transform.name == "" || transform.name == "Player(Clone)"))
         {
             transform.name = playerUniqueIdentity;
         }
-        if (kinectManager.IsPlayerCalibrated(playerID))
+        if (kinectManager != null && kinectManager.AllPlayersCalibrated1)
         {
-            MoveCube();
+            MoveCube(playerID);
         }
-
+        else {
+            transform.position = MatrixFunk.ExtractTranslationFromMatrix(ref kinectManager.kinectToWorld);
+            transform.rotation = MatrixFunk.ExtractRotationFromMatrix(ref kinectManager.kinectToWorld);
         }
-    [Client]
-    private void MoveCube() {
-        //Create individual void for the following if statements
-        kinectManager = KinectManager.Instance;
-        uint playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
+    }
+    //[Client]
+    private void MoveCube(uint playerID) {
+       //kinectManager = GetComponent<KinectManager>();
 
             Vector3 userPos = kinectManager.GetUserPosition(playerID);
-            Quaternion userRot = kinectManager.GetUserOrientation(playerID, true);
+            Quaternion userRot = kinectManager.GetUserOrientation(playerID, false);
+            Debug.Log("Move Here! " + userPos);
             //if (bothJointsTracked(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft))
             hands = getBothJointsPos(playerID, (int)KinectWrapper.NuiSkeletonPositionIndex.HandRight, (int)KinectWrapper.NuiSkeletonPositionIndex.HandLeft);
             //KinectWrapper.MapSkeletonPointToDepthPoint <----- Remember this!
             //CmdSetJointArray(hands, int.Parse(playerNetID.ToString()) - 1); //Minus one because the OffsetCalculator has the number 1 netId
             transform.eulerAngles = userRot.eulerAngles;
-            transform.position = new Vector3(userPos.x, userPos.y, userPos.z);
-
+            transform.position = (new Vector3(userPos.x, userPos.y, userPos.z))*5;
     }
 
-  
     //Called on the client when connected to a server
     public override void OnStartLocalPlayer()
     {
+        //kinectManager = GameObject.FindGameObjectWithTag("KinectManager").GetComponent<KinectManager>();
+        //offsetCalc = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
+        //kinectManager = GetComponent<KinectManager>();
+        kinectManager.StartKinect();
         GetNetIdentity();
         SetIdentity();
-        kinectManager = KinectManager.Instance;
-        kinectManager.StartKinect();
-        playerID = kinectManager != null ? kinectManager.GetPlayer1ID() : 0;
         Debug.Log("Im connected!");
         print("Player ID is " + (int.Parse(playerNetID.ToString())-1));
-    }
-    //Called on the client when connected to a server (redundant now)
-    public override void OnStartClient()
-    {
-
-        //server = GameObject.FindGameObjectWithTag("Server").GetComponent<OffsetCalculator>();
     }
 
     //Checks if current player is host
@@ -126,9 +120,7 @@ public class Player : NetworkBehaviour {
     {
         return "Player " + (int.Parse(playerNetID.ToString())-1); //Minus one because the OffsetCalculator has the number 1 netId
     }
-
-
-
+    
     //Tells the server which joints are being tracked
     [Command]
     public void CmdSetJointArray(Vector3[] Hands, int playerID) {

@@ -35,7 +35,6 @@ void setup()
      exit();
      return;  
   }
-  
   // disable mirror
   context.setMirror(true);
 
@@ -50,14 +49,17 @@ void setup()
 }
 boolean saving;
 int counter;
+
+int steps = 3; // to speed up the drawing, draw every third point
+
 void draw()
 {
-  GetPoints(false);
+  DisplayPoints();
+  //GetPoints(false);
 }
 
-void GetPoints(boolean saving){
-// update the cam
-  context.update();
+void DisplayPoints(){
+context.update();
 
   background(0,0,0);
 
@@ -67,7 +69,7 @@ void GetPoints(boolean saving){
   scale(zoomF);
 
   int[]   depthMap = context.depthMap();
-  int     steps   = 3;  // to speed up the drawing, draw every third point
+  //int     steps   = 3;  // to speed up the drawing, draw every third point
   int     index;
   PVector realWorldPoint;
  
@@ -87,26 +89,56 @@ void GetPoints(boolean saving){
       if(depthMap[index] > 0)
       { 
         // draw the projected point
-//        realWorldPoint = context.depthMapRealWorld()[index];
         realWorldPoint = realWorldMap[index];
         vertex(-realWorldPoint.x,realWorldPoint.y,realWorldPoint.z);  // make realworld z negative, in the 3d drawing coordsystem +z points in the direction of the eye
-         if(saving == true){
-          ExportPly(realWorldPoint);
-          counter++;
+        counter++;
       }  
-    }
-      //println("x: " + x + " y: " + y);
     }
   } 
   endShape();
-  
+  counter=0;
   // draw the kinect cam
   context.drawCamFrustum();
 }
 
-void ExportPly(PVector v){
-      //PVector v  = new PVector(v.x *-1, v.y *-1, v.z*-1);
-      output.println((-v.x) +" "+ (v.y) +" "+(-v.z) +" ");
+void GetPoints(){
+// update the cam
+  context.update();
+  int[]   depthMap = context.depthMap();
+  int     index;
+  PVector realWorldPoint;
+  PVector[] realWorldMap = context.depthMapRealWorld();
+  
+  for(int y=0;y < context.depthHeight();y+=steps)
+  {
+    for(int x=0;x < context.depthWidth();x+=steps)
+    {
+      index = x + y * context.depthWidth();
+      if(depthMap[index] > 0)
+      { 
+        realWorldPoint = realWorldMap[index];
+        //Write the projected point to file
+        output.println((-realWorldPoint.x) +" "+ (realWorldPoint.y) +" "+(-realWorldPoint.z) +" "); //-x to remove mirroring
+      }  
+    }
+  } 
+}
+
+void ExportPly(){
+  //Write the header neccesary for a ply file
+  output.println("ply");
+  output.println("format ascii 1.0");
+  output.println("comment this is my Proccessing file");
+  output.println("element vertex " + ((context.depthHeight()/3 * context.depthWidth()/3)-3000)); //Minus 3000
+  output.println("property float x");
+  output.println("property float y");
+  output.println("property float z");
+  output.println("end_header");
+  GetPoints(); //Write the individual points to the file
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  println(counter); // Print the amount of points
+  exit(); // Stops the program
 }
 
 void keyPressed()
@@ -145,18 +177,6 @@ void keyPressed()
     break;
   }
   
-  output.println("ply");
-  output.println("format ascii 1.0");
-  output.println("comment this is my Proccessing file");
-  output.println("element vertex " + (28000));
-  output.println("property float x");
-  output.println("property float y");
-  output.println("property float z");
-  output.println("end_header");
-  GetPoints(true);
-  output.flush(); // Writes the remaining data to the file
-  output.close(); // Finishes the file
-  println(counter);
-  exit(); // Stops the program
+  ExportPly();
 }
 

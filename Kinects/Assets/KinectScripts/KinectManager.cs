@@ -102,7 +102,7 @@ public class KinectManager : MonoBehaviour
 	
 
 	// Bool to keep track of whether Kinect has been initialized
-	private bool KinectInitialized = false; 
+	public bool KinectInitialized = false; 
 	
 	// Bools to keep track of who is currently calibrated.
 	private bool Player1Calibrated = false;
@@ -198,9 +198,22 @@ public class KinectManager : MonoBehaviour
             return instance;
         }
     }
-	
-	// checks if Kinect is initialized and ready to use. If not, there was an error during Kinect-sensor initialization
-	public static bool IsKinectInitialized()
+
+    public bool AllPlayersCalibrated1
+    {
+        get
+        {
+            return AllPlayersCalibrated;
+        }
+
+        set
+        {
+            AllPlayersCalibrated = value;
+        }
+    }
+
+    // checks if Kinect is initialized and ready to use. If not, there was an error during Kinect-sensor initialization
+    public static bool IsKinectInitialized()
 	{
 		return instance != null ? instance.KinectInitialized : false;
 	}
@@ -1765,7 +1778,7 @@ public class KinectManager : MonoBehaviour
 
 					// get player position
 					player1Pos = skeletonPos;
-					
+                    Debug.Log(player1Pos + "From manager");
 					// apply tracking state filter first
 					trackingStateFilter[0].UpdateFilter(ref skeletonData);
 					
