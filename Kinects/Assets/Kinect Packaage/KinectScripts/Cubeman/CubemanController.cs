@@ -41,9 +41,14 @@ public class CubemanController : NetworkBehaviour
 	private Quaternion initialRotation;
 	private Vector3 initialPosOffset = Vector3.zero;
 	private uint initialPosUserID = 0;
-	
-	
-	void Start () 
+
+    public KinectManager GetManager
+    {
+        get { return manager; }
+    }
+
+
+    void Start () 
 	{
 		//store bones in a list for easier access
 		bones = new GameObject[] {
@@ -89,9 +94,11 @@ public class CubemanController : NetworkBehaviour
 
 	}
 
-    [Client]
+    private KinectManager manager;
+
+   [Client]
     void MoveSkeleton() {
-        KinectManager manager = KinectManager.Instance;
+        manager = KinectManager.Instance;
         if (Input.GetKeyUp(KeyCode.S) && !manager.KinectInitialized)
         {
             manager.StartKinect();
