@@ -32,11 +32,14 @@ public class CubemanController : NetworkBehaviour
 	public GameObject Foot_Right;
 
 	public LineRenderer SkeletonLine;
-	
+
+    public GameObject cubeRepresent;
 	private GameObject[] bones; 
 	private LineRenderer[] lines;
 	private int[] parIdxs;
 	
+
+    //public 
 	private Vector3 initialPosition;
 	private Quaternion initialRotation;
 	private Vector3 initialPosOffset = Vector3.zero;
@@ -139,12 +142,12 @@ public class CubemanController : NetworkBehaviour
         Vector3 posPointMan = manager.GetUserPosition(playerID);
         posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
 
-        // store the initial position
+        /*// store the initial position
         if (initialPosUserID != playerID)
         {
             initialPosUserID = playerID;
             initialPosOffset = transform.position - (MoveVertically ? posPointMan : new Vector3(posPointMan.x, 0, posPointMan.z));
-        }
+        }*/
 
         transform.position = initialPosOffset + (MoveVertically ? posPointMan : new Vector3(posPointMan.x, 0, posPointMan.z));
 
