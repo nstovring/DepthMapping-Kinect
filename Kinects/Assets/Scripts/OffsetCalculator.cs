@@ -36,7 +36,7 @@ public class OffsetCalculator : NetworkBehaviour {
         float angle = 0;
         foreach (GameObject player in players)
         {
-            angle += player.GetComponent<CubemanController>().RpcGetAngleFromKinect();
+            angle += player.GetComponent<CubemanController>().AngleFromKinect;
         }
         return angle;
     }

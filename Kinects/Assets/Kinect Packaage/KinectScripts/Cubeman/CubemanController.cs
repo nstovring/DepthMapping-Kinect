@@ -94,9 +94,12 @@ public class CubemanController : NetworkBehaviour
     [Client]
 	void Update () 
 	{
-        if (isLocalPlayer) {
+        if (isLocalPlayer)
+        {
+            //GetAngleFromKinect();
             if (Input.GetKeyDown(KeyCode.C))
             {
+                GetAngleFromKinect();
                 Calibrate();
                 isCalibrated = true;
             }
@@ -106,9 +109,7 @@ public class CubemanController : NetworkBehaviour
                 Debug.Log("Current Pos " + transform.position);
                 isCalibrated = false;
             }
-
         }
-
 	}
 
     private void Calibrate()
@@ -122,18 +123,22 @@ public class CubemanController : NetworkBehaviour
         manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
         MoveSkeleton();
     }
-    [ClientRpc]
-    public float RpcGetAngleFromKinect()
+
+    [SyncVar]public float AngleFromKinect;
+
+    [Client]
+    public void GetAngleFromKinect()
     {
+        manager = KinectManager.Instance;
         if (manager.identity)
         {
             Vector3 kinectPos = new Vector3(0, offset.y + 1, offset.z);
-            return Vector3.Angle(kinectPos, transform.position);
+            AngleFromKinect = Vector3.Angle(kinectPos, transform.position);
         }
         else
         {
             Vector3 kinectPos = new Vector3(offset.x, offset.y + 1, offset.z);
-            return Vector3.Angle(kinectPos, transform.position);
+            AngleFromKinect = Vector3.Angle(kinectPos, transform.position);
         }
     }
 
