@@ -87,25 +87,38 @@ public class CubemanController : NetworkBehaviour
 		initialRotation = transform.rotation;
 		//transform.rotation = Quaternion.identity;
 	}
-	
+
+    private bool isCalibrated;
 	// Update is called once per frame
     [Client]
 	void Update () 
 	{
         if (isLocalPlayer) {
-            MoveSkeleton();
-
             if (Input.GetKeyDown(KeyCode.C))
             {
                 Calibrate();
+                isCalibrated = true;
             }
+            MoveSkeleton();
+            if (isCalibrated)
+            {
+                Debug.Log("Current Pos " + transform.position);
+                isCalibrated = false;
+            }
+
         }
 
 	}
 
     private void Calibrate()
     {
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y, offset.z), Quaternion.identity, Vector3.one);
+        Debug.Log("Last Pos " + transform.position);
+
+        Debug.Log("Offset "+ offset);
+        //offset.y *= -1;
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
+        
+
     }
 
     private KinectManager manager;
@@ -232,7 +245,6 @@ public class CubemanController : NetworkBehaviour
             }
             CmdDrawLine();
         }
-
 
     }
 

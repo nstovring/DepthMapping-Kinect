@@ -1778,7 +1778,6 @@ public class KinectManager : MonoBehaviour
 
 					// get player position
 					player1Pos = skeletonPos;
-                    Debug.Log(player1Pos + "From manager");
 					// apply tracking state filter first
 					trackingStateFilter[0].UpdateFilter(ref skeletonData);
 					
