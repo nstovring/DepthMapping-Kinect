@@ -105,7 +105,7 @@ public class CubemanController : NetworkBehaviour
 
     private void Calibrate()
     {
-        manager.kinectToWorld.SetTRS(offset, Quaternion.identity, Vector3.one);
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y, offset.z), Quaternion.identity, Vector3.one);
     }
 
     private KinectManager manager;
