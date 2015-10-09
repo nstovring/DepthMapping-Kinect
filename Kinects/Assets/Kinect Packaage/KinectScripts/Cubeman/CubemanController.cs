@@ -116,7 +116,10 @@ public class CubemanController : NetworkBehaviour
         Debug.Log("Last Pos " + transform.position);
         Debug.Log("Offset "+ offset);
         //offset.y *= -1;
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
+        Vector3 Angle = new Vector3(angleOffset, 0, 0);
+        Quaternion newAngleQuaternion = new Quaternion();
+        newAngleQuaternion.eulerAngles = Angle;
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
         MoveSkeleton();
     }
 
