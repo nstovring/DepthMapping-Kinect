@@ -39,6 +39,7 @@ public class OffsetCalculator : NetworkBehaviour {
             //offsetVectorRightHand = CalcOffset(hands1[0], hands2[0]);
             //offsetVectorLeftHand = CalcOffset(hands1[1], hands2[1]);
             //CmdSetOffsets(players);
+            SetOffset();
         }
         /*for( int i = 0; i< players.Length; i++) {
             if(i == 0)
@@ -46,15 +47,12 @@ public class OffsetCalculator : NetworkBehaviour {
             if(i == 1)
             hands2 = players[i].GetComponent<Player>().Hands;
         }*/
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Calibrate();
-        }
 	}
 
-    private void Calibrate()
+    private void SetOffset()
     {
-        players[1].GetComponent<CubemanController>().GetManager.kinectToWorld.SetTRS(offset, Quaternion.identity, Vector3.one);
+        //players[1].GetComponent<CubemanController>().GetManager.kinectToWorld.SetTRS(offset, Quaternion.identity, Vector3.one);
+        players[1].GetComponent<CubemanController>().offset = this.offset;
+
     }
 }

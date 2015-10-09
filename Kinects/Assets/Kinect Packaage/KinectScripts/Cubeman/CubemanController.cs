@@ -37,7 +37,8 @@ public class CubemanController : NetworkBehaviour
 	private GameObject[] bones; 
 	private LineRenderer[] lines;
 	private int[] parIdxs;
-	
+
+    [SyncVar] public Vector3 offset;
 
     //public 
 	private Vector3 initialPosition;
@@ -93,9 +94,19 @@ public class CubemanController : NetworkBehaviour
 	{
         if (isLocalPlayer) {
             MoveSkeleton();
+
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                Calibrate();
+            }
         }
 
 	}
+
+    private void Calibrate()
+    {
+        manager.kinectToWorld.SetTRS(offset, Quaternion.identity, Vector3.one);
+    }
 
     private KinectManager manager;
 

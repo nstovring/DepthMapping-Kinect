@@ -1019,8 +1019,8 @@ public class KinectManager : MonoBehaviour
 
             if (identity)
             kinectToWorld.SetTRS(new Vector3(0.0f, SensorHeight, 0.0f),  quatTiltAngle, Vector3.one);// quatTiltAngle, Vector3.one);
-                flipMatrix = Matrix4x4.identity;
-                flipMatrix[2, 2] = -1;
+             flipMatrix = Matrix4x4.identity;
+             flipMatrix[2, 2] = -1;
 
                 instance = this;
                 DontDestroyOnLoad(gameObject);
