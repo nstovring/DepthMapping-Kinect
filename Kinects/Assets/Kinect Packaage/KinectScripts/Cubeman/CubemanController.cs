@@ -122,8 +122,8 @@ public class CubemanController : NetworkBehaviour
         manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
         MoveSkeleton();
     }
-
-    public float GetAngleFromKinect()
+    [ClientRpc]
+    public float RpcGetAngleFromKinect()
     {
         if (manager.identity)
         {

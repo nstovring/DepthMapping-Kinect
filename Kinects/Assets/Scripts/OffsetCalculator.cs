@@ -18,10 +18,11 @@ public class OffsetCalculator : NetworkBehaviour {
        players = GameObject.FindGameObjectsWithTag("Player");
 
         if (players.Length >= 2) {
-
+            
             offset = players[0].transform.position - players[1].transform.position;
-            SetHorizontalAngle();
             SetOffset();
+            SetHorizontalAngle();
+            
         }
 	}
 
@@ -35,7 +36,7 @@ public class OffsetCalculator : NetworkBehaviour {
         float angle = 0;
         foreach (GameObject player in players)
         {
-            angle += player.GetComponent<CubemanController>().GetAngleFromKinect();
+            angle += player.GetComponent<CubemanController>().RpcGetAngleFromKinect();
         }
         return angle;
     }
