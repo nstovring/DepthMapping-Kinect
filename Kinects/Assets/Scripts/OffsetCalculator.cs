@@ -4,29 +4,13 @@ using UnityEngine.Networking;
 
 public class OffsetCalculator : NetworkBehaviour {
 
-    public Vector3[] hands1;
-    public Vector3[] hands2;
-    public Vector3 offsetVectorRightHand;
-    public Vector3 offsetVectorLeftHand;
-
     public Vector3 offset;
 
-    GameObject[] players;
+    public GameObject[] players;
 	void Start () {
 	
 	}
 
-    [Command]
-    public void CmdSetOffsets(GameObject[] players)
-    {
-        foreach (GameObject player in players) {
-            player.GetComponent<Player>().RpcSetOffset(offsetVectorRightHand, offsetVectorLeftHand);
-        }
-    }
-
-    Vector3 CalcOffset(Vector3 v1, Vector3 v2) {
-        return v2 - v1;
-    }
 
 	// Update is called once per frame
     [Server]
@@ -36,23 +20,37 @@ public class OffsetCalculator : NetworkBehaviour {
         if (players.Length >= 2) {
 
             offset = players[0].transform.position - players[1].transform.position;
-            //offsetVectorRightHand = CalcOffset(hands1[0], hands2[0]);
-            //offsetVectorLeftHand = CalcOffset(hands1[1], hands2[1]);
-            //CmdSetOffsets(players);
+            SetHorizontalAngle();
             SetOffset();
         }
-        /*for( int i = 0; i< players.Length; i++) {
-            if(i == 0)
-            hands1 = players[i].GetComponent<Player>().Hands;
-            if(i == 1)
-            hands2 = players[i].GetComponent<Player>().Hands;
-        }*/
 	}
 
     private void SetOffset()
     {
-        //players[1].GetComponent<CubemanController>().GetManager.kinectToWorld.SetTRS(offset, Quaternion.identity, Vector3.one);
         players[1].GetComponent<CubemanController>().offset = this.offset;
-
     }
+
+    private float CubeMenAngles()
+    {
+        float angle = 0;
+        foreach (GameObject player in players)
+        {
+            angle += player.GetComponent<CubemanController>().GetAngleFromKinect();
+        }
+        return angle;
+    }
+
+    public float HorizontalAngle;
+
+    private void SetHorizontalAngle()
+    {
+        HorizontalAngle = CubeMenAngles() + AngleBetweenGameObjects(players[0].transform, players[1].transform);
+        players[1].GetComponent<CubemanController>().angleOffset = HorizontalAngle;
+    }
+
+    private float AngleBetweenGameObjects(Transform t1, Transform t2)
+    {
+        return Vector3.Angle(t1.position, t2.position);
+    }
+
 }

@@ -39,6 +39,7 @@ public class CubemanController : NetworkBehaviour
 	private int[] parIdxs;
 
     [SyncVar] public Vector3 offset;
+    [SyncVar] public float angleOffset;
 
     //public 
 	private Vector3 initialPosition;
@@ -113,13 +114,26 @@ public class CubemanController : NetworkBehaviour
     private void Calibrate()
     {
         Debug.Log("Last Pos " + transform.position);
-
         Debug.Log("Offset "+ offset);
         //offset.y *= -1;
         manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
-        
-
+        MoveSkeleton();
     }
+
+    public float GetAngleFromKinect()
+    {
+        if (manager.identity)
+        {
+            Vector3 kinectPos = new Vector3(0, offset.y + 1, offset.z);
+            return Vector3.Angle(kinectPos, transform.position);
+        }
+        else
+        {
+            Vector3 kinectPos = new Vector3(offset.x, offset.y + 1, offset.z);
+            return Vector3.Angle(kinectPos, transform.position);
+        }
+    }
+
 
     private KinectManager manager;
 
