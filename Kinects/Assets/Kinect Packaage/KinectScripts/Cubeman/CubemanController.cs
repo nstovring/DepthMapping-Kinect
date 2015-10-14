@@ -96,9 +96,12 @@ public class CubemanController : NetworkBehaviour
             GetAngleFromKinect();
             if (Input.GetKeyDown(KeyCode.C))
             {
+                Debug.Log(AngleFromKinect + " Angle from kinect");
                 //GetAngleFromKinect();
                 Calibrate();
                 GetAngleBetweenCameras();
+                Debug.Log(angleBetweenCameras + " Angle Between Cameras");
+
                 isCalibrated = true;
             }
             MoveSkeleton();
