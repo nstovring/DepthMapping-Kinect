@@ -105,7 +105,7 @@ public class CubemanController : NetworkBehaviour
                 Calibrate();
                 GetAngleBetweenCameras();
                 Debug.Log(angleBetweenCameras + " Angle Between Cameras");
-                angleOffset = angleBetweenCameras + angleFromKinect + player1AngleFromKinect;
+                angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) + Mathf.Abs(player1AngleFromKinect);
                 Debug.Log(angleOffset + " Angle Offset");
                 isCalibrated = true;
             }

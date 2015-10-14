@@ -31,7 +31,8 @@ public class OffsetCalculator : NetworkBehaviour {
             CubemanController player2Controller = players[1].transform.GetComponent<CubemanController>();
 
             angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenCameras);
-            SetOffset();            
+            SetOffset();
+            Debug.Log(player2Controller.angleOffset + " Angle Offset");            
         }
 	}
 
