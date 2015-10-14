@@ -4,11 +4,11 @@ using UnityEngine.Networking;
 
 public class OffsetCalculator : NetworkBehaviour {
 
-    [SyncVar] public Vector3 offset;
-    [SyncVar] public float angleOffset;
+    public Vector3 offset;
+    public float angleOffset;
 
     public GameObject[] players;
-    [SyncVar] private float kinectAngle;
+    private float player1AngleFromKinect;
     private float kinect2Angle;
 
 	void Start () {
@@ -26,11 +26,11 @@ public class OffsetCalculator : NetworkBehaviour {
             offset = players[0].transform.position - players[1].transform.position;
             //kinect1Angle = this.players[0].AngleFromKinect;
             //kinect2Angle = this.players[1].AngleFromKinect;
-            kinectAngle = players[0].transform.GetComponent<CubemanController>().AngleFromKinect;
+            player1AngleFromKinect = Mathf.Abs(players[0].transform.GetComponent<CubemanController>().angleFromKinect);
 
             CubemanController player2Controller = players[1].transform.GetComponent<CubemanController>();
 
-            angleOffset = kinectAngle + player2Controller.AngleFromKinect + player2Controller.angleBetweenCameras;
+            angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenCameras);
             SetOffset();            
         }
 	}
@@ -38,7 +38,7 @@ public class OffsetCalculator : NetworkBehaviour {
     private void SetOffset()
     {
         players[1].GetComponent<CubemanController>().offset = this.offset;
-        players[1].GetComponent<CubemanController>().angleOffset = this.angleOffset;
+        players[1].GetComponent<CubemanController>().player1AngleFromKinect = this.player1AngleFromKinect;
     }
 
 }

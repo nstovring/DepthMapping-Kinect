@@ -40,7 +40,10 @@ public class CubemanController : NetworkBehaviour
 
     [SyncVar] public Vector3 offset;
     [SyncVar] public float angleOffset;
-    [SyncVar] public float AngleFromKinect;
+
+
+    [SyncVar] public float player1AngleFromKinect;
+    [SyncVar] public float angleFromKinect;
     [SyncVar] public float angleBetweenCameras;
 
     //public 
@@ -97,12 +100,13 @@ public class CubemanController : NetworkBehaviour
             GetAngleFromKinect();
             if (Input.GetKeyDown(KeyCode.C))
             {
-                Debug.Log(AngleFromKinect + " Angle from kinect");
+                Debug.Log(angleFromKinect + " Angle from kinect");
                 //GetAngleFromKinect();
                 Calibrate();
                 GetAngleBetweenCameras();
                 Debug.Log(angleBetweenCameras + " Angle Between Cameras");
-
+                angleOffset = angleBetweenCameras + angleFromKinect + player1AngleFromKinect;
+                Debug.Log(angleOffset + " Angle Offset");
                 isCalibrated = true;
             }
             MoveSkeleton();
@@ -133,7 +137,7 @@ public class CubemanController : NetworkBehaviour
         Vector3 targetDir = transform.position - Vector3.zero;
         Vector3 forward = Vector3.left;
 
-        AngleFromKinect = Vector3.Angle(targetDir, forward) - 90;
+        angleFromKinect = Vector3.Angle(targetDir, forward) - 90;
 
     }
 
