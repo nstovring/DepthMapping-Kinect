@@ -41,6 +41,7 @@ public class CubemanController : NetworkBehaviour
     [SyncVar] public Vector3 offset;
     [SyncVar] public float angleOffset;
     [SyncVar] public float AngleFromKinect;
+    [SyncVar] public float angleBetweenCameras;
 
     //public 
     private Vector3 initialPosition;
@@ -136,7 +137,6 @@ public class CubemanController : NetworkBehaviour
 
     }
 
-    [SyncVar] private float angleBetweenCameras;
 
     private void GetAngleBetweenCameras()
     {
