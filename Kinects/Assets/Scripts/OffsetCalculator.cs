@@ -18,22 +18,17 @@ public class OffsetCalculator : NetworkBehaviour {
 	// Update is called once per frame
     [Server]
 	void Update () {
-        GameObject[] playersGameObject = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
        
 
-        if (players.Length >= 2) {
-            for (int i = 0; i < playersGameObject.Length; i++)
-            {
-                players[i] = playersGameObject[i].GetComponent<CubemanController>();
-            }
-            offset = players[0].transform.position - players[1].transform.position;
-            kinect1Angle = players[0].AngleFromKinect;
-            kinect2Angle = players[1].AngleFromKinect;
-
-            SetOffset();
-            //SetHorizontalAngle();
+        if (this.players.Length >= 2) {
             
+            offset = players[0].transform.position - players[1].transform.position;
+            //kinect1Angle = this.players[0].AngleFromKinect;
+            //kinect2Angle = this.players[1].AngleFromKinect;
+
+            SetOffset();            
         }
 	}
 
