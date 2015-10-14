@@ -97,16 +97,20 @@ public class CubemanController : NetworkBehaviour
 	{
         if (isLocalPlayer)
         {
+            Debug.Log(angleOffset + " Angle Offset");
+            GetAngleBetweenCameras();
             GetAngleFromKinect();
+            angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) + Mathf.Abs(player1AngleFromKinect);
+
             if (Input.GetKeyDown(KeyCode.C))
             {
                 Debug.Log(angleFromKinect + " Angle from kinect");
                 //GetAngleFromKinect();
                 Calibrate();
-                GetAngleBetweenCameras();
+                
                 Debug.Log(angleBetweenCameras + " Angle Between Cameras");
-                angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) + Mathf.Abs(player1AngleFromKinect);
-                Debug.Log(angleOffset + " Angle Offset");
+                
+                //Debug.Log(angleOffset + " Angle Offset");
                 isCalibrated = true;
             }
             MoveSkeleton();
@@ -123,10 +127,11 @@ public class CubemanController : NetworkBehaviour
         Debug.Log("Last Pos " + transform.position);
         Debug.Log("Offset "+ offset);
         //offset.y *= -1;
-        Vector3 Angle = new Vector3(angleOffset, 0, 0);
+        Vector3 Angle = new Vector3(0, 0, angleOffset);
         Quaternion newAngleQuaternion = new Quaternion();
         newAngleQuaternion.eulerAngles = Angle;
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
+        //manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
         MoveSkeleton();
     }
 
