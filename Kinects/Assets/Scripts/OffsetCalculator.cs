@@ -6,7 +6,10 @@ public class OffsetCalculator : NetworkBehaviour {
 
     public Vector3 offset;
 
-    public GameObject[] players;
+    public CubemanController[] players;
+    private float kinect1Angle;
+    private float kinect2Angle;
+
 	void Start () {
 	
 	}
@@ -15,13 +18,21 @@ public class OffsetCalculator : NetworkBehaviour {
 	// Update is called once per frame
     [Server]
 	void Update () {
-       players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] playersGameObject = GameObject.FindGameObjectsWithTag("Player");
+
+       
 
         if (players.Length >= 2) {
-            
+            for (int i = 0; i < playersGameObject.Length; i++)
+            {
+                players[i] = playersGameObject[i].GetComponent<CubemanController>();
+            }
             offset = players[0].transform.position - players[1].transform.position;
+            kinect1Angle = players[0].AngleFromKinect;
+            kinect2Angle = players[1].AngleFromKinect;
+
             SetOffset();
-            SetHorizontalAngle();
+            //SetHorizontalAngle();
             
         }
 	}
@@ -31,22 +42,22 @@ public class OffsetCalculator : NetworkBehaviour {
         players[1].GetComponent<CubemanController>().offset = this.offset;
     }
 
-    private float CubeMenAngles()
+    /*private float CubeMenAngles()
     {
         float angle = 0;
-        foreach (GameObject player in players)
+        foreach (CubemanController player in players)
         {
             angle += player.GetComponent<CubemanController>().AngleFromKinect;
         }
         return angle;
-    }
+    }*/
 
     public float HorizontalAngle;
 
     private void SetHorizontalAngle()
     {
-        HorizontalAngle = CubeMenAngles() + AngleBetweenGameObjects(players[0].transform, players[1].transform);
-        players[1].GetComponent<CubemanController>().angleOffset = HorizontalAngle;
+        HorizontalAngle = AngleBetweenGameObjects(players[0].transform, players[1].transform);
+        players[1].angleOffset = HorizontalAngle;
     }
 
     private float AngleBetweenGameObjects(Transform t1, Transform t2)

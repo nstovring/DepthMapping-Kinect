@@ -1007,7 +1007,7 @@ public class KinectManager : MonoBehaviour
                 gestureTrackingAtTime = new float[KinectWrapper.Constants.NuiSkeletonMaxTracked];
 
                 //create the transform matrix that converts from kinect-space to world-space
-                Quaternion quatTiltAngle = new Quaternion();
+                Quaternion quatTiltAngle = Quaternion.identity;
                 quatTiltAngle.eulerAngles = new Vector3(0, 0, 0);///(-SensorAngle, 0.0f, 0.0f);
 
                 //float heightAboveHips = SensorHeight - 1.0f;
@@ -1020,7 +1020,7 @@ public class KinectManager : MonoBehaviour
                     kinectToWorld.SetTRS(new Vector3(0.0f, SensorHeight, 0.0f), quatTiltAngle, Vector3.one);
                         // quatTiltAngle, Vector3.one);
                 }
-                    flipMatrix = Matrix4x4.identity;
+                  flipMatrix = Matrix4x4.identity;
                  flipMatrix[2, 2] = -1;
 
                 instance = this;
@@ -1134,11 +1134,6 @@ public class KinectManager : MonoBehaviour
             StartKinect();
         }
 
-        /*f (!identity)
-        {
-            transform.position = MatrixFunk.ExtractTranslationFromMatrix(ref kinectToWorld);
-            transform.rotation = MatrixFunk.ExtractRotationFromMatrix(ref kinectToWorld);
-        }*/
         if (KinectInitialized)
 		{
 			// needed by the KinectExtras' native wrapper to check for next frames

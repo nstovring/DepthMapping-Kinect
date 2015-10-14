@@ -40,18 +40,15 @@ public class CubemanController : NetworkBehaviour
 
     [SyncVar] public Vector3 offset;
     [SyncVar] public float angleOffset;
+    [SyncVar] public float AngleFromKinect;
 
     //public 
-	private Vector3 initialPosition;
+    private Vector3 initialPosition;
 	private Quaternion initialRotation;
 	private Vector3 initialPosOffset = Vector3.zero;
 	private uint initialPosUserID = 0;
 
-    public KinectManager GetManager
-    {
-        get { return manager; }
-    }
-
+    private KinectManager manager;
 
     void Start () 
 	{
@@ -96,11 +93,12 @@ public class CubemanController : NetworkBehaviour
 	{
         if (isLocalPlayer)
         {
-            //GetAngleFromKinect();
+            GetAngleFromKinect();
             if (Input.GetKeyDown(KeyCode.C))
             {
-                GetAngleFromKinect();
+                //GetAngleFromKinect();
                 Calibrate();
+                GetAngleBetweenCameras();
                 isCalibrated = true;
             }
             MoveSkeleton();
@@ -120,32 +118,35 @@ public class CubemanController : NetworkBehaviour
         Vector3 Angle = new Vector3(angleOffset, 0, 0);
         Quaternion newAngleQuaternion = new Quaternion();
         newAngleQuaternion.eulerAngles = Angle;
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
         MoveSkeleton();
     }
 
-    [SyncVar]public float AngleFromKinect;
 
     [Client]
     public void GetAngleFromKinect()
     {
-        manager = KinectManager.Instance;
-        if (manager.identity)
-        {
-            Vector3 kinectPos = new Vector3(0, offset.y + 1, offset.z);
-            AngleFromKinect = Vector3.Angle(kinectPos, transform.position);
-        }
-        else
-        {
-            Vector3 kinectPos = new Vector3(offset.x, offset.y + 1, offset.z);
-            AngleFromKinect = Vector3.Angle(kinectPos, transform.position);
-        }
+        Vector3 targetDir = transform.position - Vector3.zero;
+        Vector3 forward = Vector3.left;
+
+        AngleFromKinect = Vector3.Angle(targetDir, forward) - 90;
+
     }
 
+    [SyncVar] private float angleBetweenCameras;
 
-    private KinectManager manager;
+    private void GetAngleBetweenCameras()
+    {
+        Vector3 positionVector3 = transform.position;
+        Vector3 v0Vector3 = Vector3.zero;
+        Vector3 vOffsetVector3 = offset;
+        Vector3 r1Vector3 = positionVector3 - vOffsetVector3;
+        Vector3 r2Vector3 = positionVector3 - v0Vector3;
 
-   [Client]
+        angleBetweenCameras = Vector3.Angle(r1Vector3, r2Vector3);
+    }
+
+    [Client]
     void MoveSkeleton() {
         manager = KinectManager.Instance;
         if (Input.GetKeyUp(KeyCode.S) && !manager.KinectInitialized)
