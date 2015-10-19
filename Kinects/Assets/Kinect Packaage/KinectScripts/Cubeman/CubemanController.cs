@@ -127,9 +127,9 @@ public class CubemanController : NetworkBehaviour
         Debug.Log("Last Pos " + transform.position);
         Debug.Log("Offset "+ offset);
         //offset.y *= -1;
-        Vector3 Angle = new Vector3(0, 0, angleOffset);
-        Quaternion newAngleQuaternion = new Quaternion();
-        newAngleQuaternion.eulerAngles = Angle;
+        Vector3 Angle = new Vector3(0, angleOffset, 0);
+        Quaternion newAngleQuaternion = Quaternion.identity;
+        newAngleQuaternion.eulerAngles = new Vector3(0, angleOffset, 0);
         //manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
         manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
         MoveSkeleton();
@@ -200,7 +200,7 @@ public class CubemanController : NetworkBehaviour
         // set the user position in space
         Vector3 posPointMan = manager.GetUserPosition(playerID);
         posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
-
+        posPointMan.x *= 1;
         /*// store the initial position
         if (initialPosUserID != playerID)
         {
