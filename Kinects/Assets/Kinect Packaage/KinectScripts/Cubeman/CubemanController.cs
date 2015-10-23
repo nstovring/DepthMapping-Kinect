@@ -8,9 +8,11 @@ public class CubemanController : NetworkBehaviour
 	public bool MoveVertically = false;
 	public bool MirroredMovement = false;
 
-	//public GameObject debugText;
-	
-	public GameObject Hip_Center;
+    public Vector3 angleTest;
+
+    //public GameObject debugText;
+
+    public GameObject Hip_Center;
 	public GameObject Spine;
 	public GameObject Shoulder_Center;
 	public GameObject Head;
@@ -97,44 +99,46 @@ public class CubemanController : NetworkBehaviour
 	{
         if (isLocalPlayer)
         {
-            Debug.Log(angleOffset + " Angle Offset");
-            GetAngleBetweenCameras();
-            GetAngleFromKinect();
-            angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) + Mathf.Abs(player1AngleFromKinect);
-
-            if (Input.GetKeyDown(KeyCode.C))
+            if (manager == null)
             {
-                Debug.Log(angleFromKinect + " Angle from kinect");
-                //GetAngleFromKinect();
-                Calibrate();
-                
-                Debug.Log(angleBetweenCameras + " Angle Between Cameras");
-                
-                //Debug.Log(angleOffset + " Angle Offset");
-                isCalibrated = true;
+                manager = KinectManager.Instance;
             }
-            MoveSkeleton();
-            if (isCalibrated)
+            else
             {
-                Debug.Log("Current Pos " + transform.position);
-                isCalibrated = false;
+                GetAngleBetweenCameras();
+                GetAngleFromKinect();
+                angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) +
+                              Mathf.Abs(player1AngleFromKinect);
+                Calibrate();
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    Debug.Log(angleFromKinect + " Angle from kinect");
+                    Debug.Log(angleBetweenCameras + " Angle Between Cameras");
+                    isCalibrated = true;
+                }
+                if (isCalibrated)
+                {
+                    Debug.Log("Current Pos " + transform.position);
+                    isCalibrated = false;
+                }
+
+                MoveSkeleton();
+
             }
         }
 	}
 
+
     private void Calibrate()
     {
-        Debug.Log("Last Pos " + transform.position);
-        Debug.Log("Offset "+ offset);
+        //Debug.Log("Last Pos " + transform.position);
+        //Debug.Log("Offset "+ offset);
         //offset.y *= -1;
-        Vector3 Angle = new Vector3(0, angleOffset, 0);
-        Quaternion newAngleQuaternion = Quaternion.identity;
-        newAngleQuaternion.eulerAngles = new Vector3(0, angleOffset, 0);
+        Quaternion newAngleQuaternion = Quaternion.Euler(-manager.SensorAngle, angleTest.y, 0);
         //manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), newAngleQuaternion, Vector3.one);
-        MoveSkeleton();
+        manager.kinectToWorld.SetTRS(new Vector3(0f,0f,0f), newAngleQuaternion, Vector3.one);
+        //MoveSkeleton();
     }
-
 
     [Client]
     public void GetAngleFromKinect()
@@ -145,7 +149,6 @@ public class CubemanController : NetworkBehaviour
         angleFromKinect = Vector3.Angle(targetDir, forward) - 90;
 
     }
-
 
     private void GetAngleBetweenCameras()
     {
@@ -160,7 +163,6 @@ public class CubemanController : NetworkBehaviour
 
     [Client]
     void MoveSkeleton() {
-        manager = KinectManager.Instance;
         if (Input.GetKeyUp(KeyCode.S) && !manager.KinectInitialized)
         {
             manager.StartKinect();
@@ -193,20 +195,14 @@ public class CubemanController : NetworkBehaviour
                     lines[i].gameObject.SetActive(false);
                 }
             }
-
             return;
         }
 
         // set the user position in space
         Vector3 posPointMan = manager.GetUserPosition(playerID);
         posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
+        //Maybe remove this
         posPointMan.x *= 1;
-        /*// store the initial position
-        if (initialPosUserID != playerID)
-        {
-            initialPosUserID = playerID;
-            initialPosOffset = transform.position - (MoveVertically ? posPointMan : new Vector3(posPointMan.x, 0, posPointMan.z));
-        }*/
 
         transform.position = initialPosOffset + (MoveVertically ? posPointMan : new Vector3(posPointMan.x, 0, posPointMan.z));
 
@@ -278,7 +274,7 @@ public class CubemanController : NetworkBehaviour
                     lines[i].gameObject.SetActive(false);
                 }
             }
-            CmdDrawLine();
+            //CmdDrawLine();
         }
 
     }

@@ -1008,7 +1008,7 @@ public class KinectManager : MonoBehaviour
 
                 //create the transform matrix that converts from kinect-space to world-space
                 Quaternion quatTiltAngle = Quaternion.identity;
-                quatTiltAngle.eulerAngles = new Vector3(0, 0, 0);///(-SensorAngle, 0.0f, 0.0f);
+                quatTiltAngle.eulerAngles = new Vector3(-SensorAngle, 0, 0);///(-SensorAngle, 0.0f, 0.0f);
 
                 //float heightAboveHips = SensorHeight - 1.0f;
 
