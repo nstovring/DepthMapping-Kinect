@@ -102,6 +102,7 @@ public class CubemanController : NetworkBehaviour
             if (manager == null)
             {
                 manager = KinectManager.Instance;
+                ///manager.StartKinect();
             }
             else
             {
@@ -109,11 +110,11 @@ public class CubemanController : NetworkBehaviour
                 GetAngleFromKinect();
                 angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) +
                               Mathf.Abs(player1AngleFromKinect);
-                Calibrate();
                 if (Input.GetKeyDown(KeyCode.C))
                 {
                     Debug.Log(angleFromKinect + " Angle from kinect");
                     Debug.Log(angleBetweenCameras + " Angle Between Cameras");
+                    Calibrate();
                     isCalibrated = true;
                 }
                 if (isCalibrated)
@@ -122,12 +123,30 @@ public class CubemanController : NetworkBehaviour
                     isCalibrated = false;
                 }
 
-                MoveSkeleton();
-
+                if(manager)
+                //MoveSkeleton();
+                TestRotOffset();
             }
         }
 	}
 
+    void TestRotOffset()
+    {
+        uint playerID = manager != null ? manager.GetPlayer1ID() : 0;
+        Vector3 posPointMan = manager.GetUserPosition(playerID);
+        float yRotation = 90;
+        posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
+        //Maybe remove this
+        posPointMan.x *= 1;
+
+        Vector3 directionVector3 = Quaternion.AngleAxis(yRotation, Vector3.up) * posPointMan;
+
+        cubeRepresent.transform.position = directionVector3;
+
+        //manager.kinectToWorld.MultiplyVector(directionVector3);
+        //cubeRepresent.transform.eulerAngles = directionVector3;
+        //Apply direction to movement of cube
+    }
 
     private void Calibrate()
     {
@@ -135,8 +154,8 @@ public class CubemanController : NetworkBehaviour
         //Debug.Log("Offset "+ offset);
         //offset.y *= -1;
         Quaternion newAngleQuaternion = Quaternion.Euler(-manager.SensorAngle, angleTest.y, 0);
-        //manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
-        manager.kinectToWorld.SetTRS(new Vector3(0f,0f,0f), newAngleQuaternion, Vector3.one);
+        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
+        //manager.kinectToWorld.SetTRS(new Vector3(0f,0f,0f), Quaternion.identity, Vector3.one);
         //MoveSkeleton();
     }
 
@@ -163,12 +182,11 @@ public class CubemanController : NetworkBehaviour
 
     [Client]
     void MoveSkeleton() {
-        if (Input.GetKeyUp(KeyCode.S) && !manager.KinectInitialized)
-        {
-            manager.StartKinect();
-        }
         // get 1st player
         uint playerID = manager != null ? manager.GetPlayer1ID() : 0;
+
+        initialPosition = MatrixFunk.ExtractTranslationFromMatrix(ref manager.kinectToWorld);
+        initialRotation = MatrixFunk.ExtractRotationFromMatrix(ref manager.kinectToWorld);
 
         if (playerID <= 0)
         {
@@ -274,45 +292,6 @@ public class CubemanController : NetworkBehaviour
                     lines[i].gameObject.SetActive(false);
                 }
             }
-            //CmdDrawLine();
         }
-
     }
-
-    [Command]
-    void CmdDrawLine() {
-        for (int i = 0; i < bones.Length; i++)
-        {
-            bool bLineDrawn = false;
-
-            if (bones[i] != null)
-            {
-                if (bones[i].gameObject.activeSelf)
-                {
-                    Vector3 posJoint = bones[i].transform.position;
-
-                    int parI = parIdxs[i];
-                    Vector3 posParent = bones[parI].transform.position;
-
-                    if (bones[parI].gameObject.activeSelf)
-                    {
-                        lines[i].gameObject.SetActive(true);
-
-                        //lines[i].SetVertexCount(2);
-                        lines[i].SetPosition(0, posParent);
-                        lines[i].SetPosition(1, posJoint);
-
-                        bLineDrawn = true;
-                    }
-                }
-            }
-
-            if (!bLineDrawn)
-            {
-                lines[i].gameObject.SetActive(false);
-            }
-        }
-
-    }
-
 }
