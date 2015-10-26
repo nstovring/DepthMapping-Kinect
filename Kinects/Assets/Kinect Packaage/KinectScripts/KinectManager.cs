@@ -152,6 +152,7 @@ public class KinectManager : MonoBehaviour
 	private KinectWrapper.NuiTransformSmoothParameters smoothParameters;
 	private int player1Index, player2Index;
 	
+
 	// Skeleton tracking states, positions and joints' orientations
 	private Vector3 player1Pos, player2Pos;
 	private Matrix4x4 player1Ori, player2Ori;
@@ -210,6 +211,11 @@ public class KinectManager : MonoBehaviour
         {
             AllPlayersCalibrated = value;
         }
+    }
+
+    public KinectWrapper.NuiSkeletonFrame SkeletonFrame
+    {
+        get { return skeletonFrame; }
     }
 
     // checks if Kinect is initialized and ready to use. If not, there was an error during Kinect-sensor initialization
@@ -873,11 +879,6 @@ public class KinectManager : MonoBehaviour
 
 
     //----------------------------------- end of public functions --------------------------------------//
-
-    /*override public void OnStartClient() {
-        StartKinect();
-
-    }*/
 
 	public void StartKinect()
 	{

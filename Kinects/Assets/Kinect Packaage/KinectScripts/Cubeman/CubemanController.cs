@@ -5,12 +5,11 @@ using UnityEngine.Networking;
 
 public class CubemanController : NetworkBehaviour 
 {
+    //Public 
 	public bool MoveVertically = false;
 	public bool MirroredMovement = false;
 
-    public Vector3 angleTest;
-
-    //public GameObject debugText;
+    public float yRotationOffset = 90;
 
     public GameObject Hip_Center;
 	public GameObject Spine;
@@ -40,20 +39,18 @@ public class CubemanController : NetworkBehaviour
 	private LineRenderer[] lines;
 	private int[] parIdxs;
 
-    [SyncVar] public Vector3 offset;
+    //Sync Vars
+    [SyncVar] public Vector3 positionOffset;
     [SyncVar] public float angleOffset;
-
-
-    [SyncVar] public float player1AngleFromKinect;
+    [SyncVar] public float otherAngleFromKinect;
     [SyncVar] public float angleFromKinect;
-    [SyncVar] public float angleBetweenCameras;
+    [SyncVar] public float angleBetweenKinects;
 
-    //public 
+    //Private 
     private Vector3 initialPosition;
 	private Quaternion initialRotation;
 	private Vector3 initialPosOffset = Vector3.zero;
 	private uint initialPosUserID = 0;
-
     private KinectManager manager;
 
     void Start () 
@@ -102,19 +99,18 @@ public class CubemanController : NetworkBehaviour
             if (manager == null)
             {
                 manager = KinectManager.Instance;
-                ///manager.StartKinect();
             }
             else
             {
-                GetAngleBetweenCameras();
-                GetAngleFromKinect();
-                angleOffset = Mathf.Abs(angleBetweenCameras) + Mathf.Abs(angleFromKinect) +
-                              Mathf.Abs(player1AngleFromKinect);
+                angleBetweenKinects = GetAngleBetweenKinects();
+                angleFromKinect = GetAngleBetweenForwardAxisAndTrackedUser();
+                angleOffset = Mathf.Abs(angleBetweenKinects) + Mathf.Abs(angleFromKinect) +
+                              Mathf.Abs(otherAngleFromKinect);
                 if (Input.GetKeyDown(KeyCode.C))
                 {
                     Debug.Log(angleFromKinect + " Angle from kinect");
-                    Debug.Log(angleBetweenCameras + " Angle Between Cameras");
-                    Calibrate();
+                    Debug.Log(angleBetweenKinects + " Angle Between Cameras");
+                    CalibratePosition();
                     isCalibrated = true;
                 }
                 if (isCalibrated)
@@ -125,59 +121,79 @@ public class CubemanController : NetworkBehaviour
 
                 if(manager)
                 //MoveSkeleton();
-                TestRotOffset();
+                ApplyRotationOffset();
             }
         }
 	}
 
-    void TestRotOffset()
+    
+    void ApplyRotationOffset()
     {
         uint playerID = manager != null ? manager.GetPlayer1ID() : 0;
         Vector3 posPointMan = manager.GetUserPosition(playerID);
-        float yRotation = 90;
+        
         posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
-        //Maybe remove this
         posPointMan.x *= 1;
+        Quaternion direction = Quaternion.AngleAxis(yRotationOffset, Vector3.up);
 
-        Vector3 directionVector3 = Quaternion.AngleAxis(yRotation, Vector3.up) * posPointMan;
-
-        cubeRepresent.transform.position = directionVector3;
-
-        //manager.kinectToWorld.MultiplyVector(directionVector3);
-        //cubeRepresent.transform.eulerAngles = directionVector3;
+        cubeRepresent.transform.position = direction * posPointMan;
+        RotateWithUser();
         //Apply direction to movement of cube
     }
 
-    private void Calibrate()
+    private void CalibratePosition()
     {
         //Debug.Log("Last Pos " + transform.position);
         //Debug.Log("Offset "+ offset);
-        //offset.y *= -1;
-        Quaternion newAngleQuaternion = Quaternion.Euler(-manager.SensorAngle, angleTest.y, 0);
-        manager.kinectToWorld.SetTRS(new Vector3(offset.x,offset.y + 1, offset.z), Quaternion.identity, Vector3.one);
-        //manager.kinectToWorld.SetTRS(new Vector3(0f,0f,0f), Quaternion.identity, Vector3.one);
-        //MoveSkeleton();
+        manager.kinectToWorld.SetTRS(new Vector3(positionOffset.x,positionOffset.y + 1, positionOffset.z), Quaternion.identity, Vector3.one);
     }
 
     [Client]
-    public void GetAngleFromKinect()
+    public float GetAngleBetweenForwardAxisAndTrackedUser()
     {
         Vector3 targetDir = transform.position - Vector3.zero;
         Vector3 forward = Vector3.left;
 
-        angleFromKinect = Vector3.Angle(targetDir, forward) - 90;
+        return Vector3.Angle(targetDir, forward) - 90;
 
     }
 
-    private void GetAngleBetweenCameras()
+    private float GetAngleBetweenKinects()
     {
         Vector3 positionVector3 = transform.position;
         Vector3 v0Vector3 = Vector3.zero;
-        Vector3 vOffsetVector3 = offset;
+        Vector3 vOffsetVector3 = positionOffset;
         Vector3 r1Vector3 = positionVector3 - vOffsetVector3;
         Vector3 r2Vector3 = positionVector3 - v0Vector3;
+        return Vector3.Angle(r1Vector3, r2Vector3);
+    }
 
-        angleBetweenCameras = Vector3.Angle(r1Vector3, r2Vector3);
+    private void RotateWithUser()
+    {
+        if (manager && manager.IsInitialized())
+        {
+            if (manager.IsUserDetected())
+            {
+                uint userId = manager.GetPlayer1ID();
+
+                if (manager.IsJointTracked(userId, (int)KinectWrapper.NuiSkeletonPositionIndex.ShoulderLeft) &&
+                   manager.IsJointTracked(userId, (int)KinectWrapper.NuiSkeletonPositionIndex.ShoulderRight))
+                {
+                    Vector3 posLeftShoulder = manager.GetJointPosition(userId, (int)KinectWrapper.NuiSkeletonPositionIndex.ShoulderLeft);
+                    Vector3 posRightShoulder = manager.GetJointPosition(userId, (int)KinectWrapper.NuiSkeletonPositionIndex.ShoulderRight);
+
+                    posLeftShoulder.z = -posLeftShoulder.z;
+                    posRightShoulder.z = -posRightShoulder.z;
+
+                    Vector3 dirLeftRight = posRightShoulder - posLeftShoulder;
+                    dirLeftRight -= Vector3.Project(dirLeftRight, Vector3.up);
+
+                    Quaternion rotationShoulders = Quaternion.FromToRotation(Vector3.right, dirLeftRight);
+
+                    cubeRepresent.transform.rotation = rotationShoulders;
+                }
+            }
+        }
     }
 
     [Client]
