@@ -1,7 +1,9 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 public class CubemanController : NetworkBehaviour 
 {
@@ -52,6 +54,7 @@ public class CubemanController : NetworkBehaviour
 	private Vector3 initialPosOffset = Vector3.zero;
 	private uint initialPosUserID = 0;
     private KinectManager manager;
+    private bool isCalibrated;
 
     void Start () 
 	{
@@ -86,11 +89,16 @@ public class CubemanController : NetworkBehaviour
 		
 		initialPosition = transform.position;
 		initialRotation = transform.rotation;
-		//transform.rotation = Quaternion.identity;
-	}
 
-    private bool isCalibrated;
-	// Update is called once per frame
+
+        //transform.rotation = Quaternion.identity;
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        cubeRepresent.transform.GetComponent<MeshRenderer>().material.color = new Color(Random.value, Random.value, Random.value);
+    }
+    // Update is called once per frame
     [Client]
 	void Update () 
 	{
@@ -119,14 +127,16 @@ public class CubemanController : NetworkBehaviour
                     isCalibrated = false;
                 }
 
-                if(manager)
-                //MoveSkeleton();
-                ApplyRotationOffset();
+                if (manager)
+                {
+                    //MoveSkeleton();
+                    ApplyRotationOffset();
+                }
             }
         }
 	}
 
-    
+    [Client]
     void ApplyRotationOffset()
     {
         uint playerID = manager != null ? manager.GetPlayer1ID() : 0;
@@ -136,8 +146,8 @@ public class CubemanController : NetworkBehaviour
         posPointMan.x *= 1;
         Quaternion direction = Quaternion.AngleAxis(yRotationOffset, Vector3.up);
 
-        cubeRepresent.transform.position = direction * posPointMan;
-        RotateWithUser();
+        cubeRepresent.transform.position =  (direction * posPointMan) != Vector3.zero ? (direction * posPointMan) : posPointMan;
+        //RotateWithUser();
         //Apply direction to movement of cube
     }
 
@@ -168,6 +178,7 @@ public class CubemanController : NetworkBehaviour
         return Vector3.Angle(r1Vector3, r2Vector3);
     }
 
+    [Client]
     private void RotateWithUser()
     {
         if (manager && manager.IsInitialized())
