@@ -126,12 +126,8 @@ public class CubemanController : NetworkBehaviour
                     Debug.Log("Current Pos " + transform.position);
                     isCalibrated = false;
                 }
-
-                if (manager)
-                {
-                    //MoveSkeleton();
-                    ApplyRotationOffset();
-                }
+                  //MoveSkeleton();
+                  ApplyRotationOffset();
             }
         }
 	}
