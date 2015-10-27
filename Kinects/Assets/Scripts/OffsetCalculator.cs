@@ -22,9 +22,9 @@ public class OffsetCalculator : NetworkBehaviour {
 
         if (this.players.Length >= 2) {
             player2Offset = players[0].transform.position - players[1].transform.position;
-            player1AngleFromKinect = Mathf.Abs(players[0].transform.GetComponent<CubemanController>().angleFromKinect);
+            player1AngleFromKinect = Mathf.Abs(players[0].transform.GetComponent<CubeController>().angleFromKinect);
 
-            CubemanController player2Controller = players[1].transform.GetComponent<CubemanController>();
+            CubeController player2Controller = players[1].transform.GetComponent<CubeController>();
 
             player2angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenKinects);
             SetPositionOffset();
@@ -33,8 +33,8 @@ public class OffsetCalculator : NetworkBehaviour {
 
     private void SetPositionOffset()
     {
-        players[1].GetComponent<CubemanController>().positionOffset = this.player2Offset;
-        players[1].GetComponent<CubemanController>().otherAngleFromKinect = this.player1AngleFromKinect;
+        players[1].GetComponent<CubeController>().positionOffset = this.player2Offset;
+        players[1].GetComponent<CubeController>().otherAngleFromKinect = this.player1AngleFromKinect;
     }
 
 }
