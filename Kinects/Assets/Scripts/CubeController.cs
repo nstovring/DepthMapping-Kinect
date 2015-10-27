@@ -11,9 +11,9 @@ public class CubeController : NetworkBehaviour
     public bool MoveVertically = false;
     public bool MirroredMovement = false;
 
-    public float yRotationOffset = 90;
+    [SyncVar]
+    private float yRotationOffset = 0;
 
-    
     //Sync Vars
     [SyncVar]
     public Vector3 positionOffset;
@@ -34,6 +34,19 @@ public class CubeController : NetworkBehaviour
     private KinectManager manager;
     private bool isCalibrated;
     [SyncVar] private Color userColor;
+
+    public float YRotationOffset
+    {
+        get
+        {
+            return yRotationOffset;
+        }
+
+        set
+        {
+            yRotationOffset = value;
+        }
+    }
 
     void Start()
     {
@@ -92,17 +105,15 @@ public class CubeController : NetworkBehaviour
 
         posPointMan.z = !MirroredMovement ? -posPointMan.z : posPointMan.z;
         posPointMan.x *= 1;
-        Quaternion direction = Quaternion.AngleAxis(yRotationOffset, Vector3.up);
+        Quaternion direction = Quaternion.AngleAxis(YRotationOffset, Vector3.up);
 
         transform.position = (direction * posPointMan) != Vector3.zero ? (direction * posPointMan) : posPointMan;
-        //RotateWithUser();
+        RotateWithUser();
         //Apply direction to movement of cube
     }
 
     private void CalibratePosition()
     {
-        //Debug.Log("Last Pos " + transform.position);
-        //Debug.Log("Offset "+ offset);
         manager.kinectToWorld.SetTRS(new Vector3(positionOffset.x, positionOffset.y + 1, positionOffset.z), Quaternion.identity, Vector3.one);
     }
 

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using System;
 
 public class OffsetCalculator : NetworkBehaviour {
 
@@ -28,9 +29,17 @@ public class OffsetCalculator : NetworkBehaviour {
 
             player2angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenKinects);
             SetPositionOffset();
+            SetRotationOffset();
         }
 	}
-
+    [Server]
+    private void SetRotationOffset()
+    {
+        //players[1].GetComponent<CubeController>().YRotationOffset = 
+            Debug.Log(Vector3.Angle(players[0].transform.forward,
+            players[0].transform.forward));
+    }
+    [Server]
     private void SetPositionOffset()
     {
         players[1].GetComponent<CubeController>().positionOffset = this.player2Offset;
