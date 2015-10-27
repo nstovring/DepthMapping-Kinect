@@ -33,16 +33,22 @@ public class CubeController : NetworkBehaviour
     private uint initialPosUserID = 0;
     private KinectManager manager;
     private bool isCalibrated;
+    [SyncVar] private Color userColor;
 
     void Start()
     {
-        initialPosition = transform.position;
-        initialRotation = transform.rotation;
+        if (isLocalPlayer)
+        {
+            initialPosition = transform.position;
+            initialRotation = transform.rotation;
+        }
     }
 
     public override void OnStartLocalPlayer()
     {
-        transform.GetComponent<MeshRenderer>().material.color = new Color(Random.value, Random.value, Random.value);
+        userColor = new Color(Random.value, Random.value, Random.value);
+        transform.GetComponent<MeshRenderer>().material.color = userColor;
+        transform.name = "User " + (int.Parse(GetComponent<NetworkIdentity>().netId.ToString()) - 1);
     }
     // Update is called once per frame
     [Client]
