@@ -48,6 +48,8 @@ public class CubeController : NetworkBehaviour
         }
     }
 
+    [SyncVar] public float tempRotation;
+
     void Start()
     {
         if (isLocalPlayer)
@@ -84,6 +86,7 @@ public class CubeController : NetworkBehaviour
                     Debug.Log(angleFromKinect + " Angle from kinect");
                     Debug.Log(angleBetweenKinects + " Angle Between Cameras");
                     CalibratePosition();
+                    CalibrateRotation(tempRotation);
                     isCalibrated = true;
                 }
                 if (isCalibrated)
@@ -96,6 +99,8 @@ public class CubeController : NetworkBehaviour
             }
         }
     }
+
+    
 
     [Client]
     void ApplyRotationOffset()
@@ -110,6 +115,10 @@ public class CubeController : NetworkBehaviour
         transform.position = (direction * posPointMan) != Vector3.zero ? (direction * posPointMan) : posPointMan;
         RotateWithUser();
         //Apply direction to movement of cube
+    }
+    private void CalibrateRotation(float rotation)
+    {
+        YRotationOffset = rotation;
     }
 
     private void CalibratePosition()
