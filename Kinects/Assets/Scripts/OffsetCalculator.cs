@@ -8,7 +8,7 @@ public class OffsetCalculator : NetworkBehaviour {
     public Vector3 player2Offset;
     public float player2angleOffset;
 
-    public GameObject[] players;
+    private GameObject[] players;
     private float player1AngleFromKinect;
 
 	void Start () {
@@ -35,9 +35,11 @@ public class OffsetCalculator : NetworkBehaviour {
     [Server]
     private void SetRotationOffset()
     {
-        //players[1].GetComponent<CubeController>().YRotationOffset = 
-            Debug.Log(Vector3.Angle(players[0].transform.forward,
-            players[0].transform.forward));
+        //Debug.Log(players[0].transform.forward  +" & "+ players[1].transform.forward);
+        //Debug.Log(Vector3.Angle(players[0].transform.forward, players[1].transform.forward));
+
+        players[1].GetComponent<CubeController>().tempRotation = Vector3.Angle(players[0].transform.forward,
+          players[1].transform.forward);
     }
     [Server]
     private void SetPositionOffset()
