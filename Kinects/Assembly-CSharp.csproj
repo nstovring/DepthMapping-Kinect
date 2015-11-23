@@ -45,40 +45,51 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\DepthColliderDemo\Scripts\DepthImageViewer.cs" />
-     <Compile Include="Assets\DepthColliderDemo\Scripts\EggMover.cs" />
-     <Compile Include="Assets\DepthColliderDemo\Scripts\EggSpawner.cs" />
-     <Compile Include="Assets\GesturesDemo\Scripts\GestureListener.cs" />
-     <Compile Include="Assets\GesturesDemo\Scripts\PresentationScript.cs" />
-     <Compile Include="Assets\KinectScripts\AvatarController.cs" />
-     <Compile Include="Assets\KinectScripts\AvatarControllerClassic.cs" />
-     <Compile Include="Assets\KinectScripts\Cubeman\CubemanController.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\BoneOrientationsConstraint.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\BoneOrientationsFilter.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\ClippedLegsFilter.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\JointPositionsFilter.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\KinectHelper.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\SelfIntersectionConstraint.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\TimedLerp.cs" />
-     <Compile Include="Assets\KinectScripts\Filters\TrackingStateFilter.cs" />
-     <Compile Include="Assets\KinectScripts\KinectGestures.cs" />
-     <Compile Include="Assets\KinectScripts\KinectManager.cs" />
-     <Compile Include="Assets\KinectScripts\KinectWrapper.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\FollowUserRotation.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\GetJointPositionDemo.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\LoadMainLevel.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\MouseControl.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\SetSceneAvatars.cs" />
-     <Compile Include="Assets\KinectScripts\Samples\SimpleGestureListener.cs" />
-     <Compile Include="Assets\NetworkManager.cs" />
-     <Compile Include="Assets\OffsetCalculator.cs" />
-     <Compile Include="Assets\OverlayDemo\Scripts\KinectOverlayer.cs" />
-     <Compile Include="Assets\Player.cs" />
+     <Compile Include="Assets\ExampleClass.cs" />
+     <Compile Include="Assets\Kinect Packaage\DepthColliderDemo\Scripts\DepthImageViewer.cs" />
+     <Compile Include="Assets\Kinect Packaage\DepthColliderDemo\Scripts\EggMover.cs" />
+     <Compile Include="Assets\Kinect Packaage\DepthColliderDemo\Scripts\EggSpawner.cs" />
+     <Compile Include="Assets\Kinect Packaage\GesturesDemo\Scripts\GestureListener.cs" />
+     <Compile Include="Assets\Kinect Packaage\GesturesDemo\Scripts\PresentationScript.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\AvatarController.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\AvatarControllerClassic.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Cubeman\CubemanController.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\BoneOrientationsConstraint.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\BoneOrientationsFilter.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\ClippedLegsFilter.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\JointPositionsFilter.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\KinectHelper.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\SelfIntersectionConstraint.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\TimedLerp.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Filters\TrackingStateFilter.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\KinectGestures.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\KinectManager.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\KinectWrapper.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\FollowUserRotation.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\GetJointPositionDemo.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\LoadMainLevel.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\MouseControl.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\SetSceneAvatars.cs" />
+     <Compile Include="Assets\Kinect Packaage\KinectScripts\Samples\SimpleGestureListener.cs" />
+     <Compile Include="Assets\Kinect Packaage\OverlayDemo\Scripts\KinectOverlayer.cs" />
+     <Compile Include="Assets\Scripts\CubeController.cs" />
+     <Compile Include="Assets\Scripts\MatrixFunk.cs" />
+     <Compile Include="Assets\Scripts\NetworkManager.cs" />
+     <Compile Include="Assets\Scripts\OffsetCalculator.cs" />
+     <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\UserController.cs" />
+     <Compile Include="Assets\Scripts\UserSyncPosition.cs" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Cecil">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/Mono.Cecil.dll</HintPath>
