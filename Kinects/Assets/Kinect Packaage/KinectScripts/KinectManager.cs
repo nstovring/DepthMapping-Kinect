@@ -1128,11 +1128,19 @@ public class KinectManager : MonoBehaviour
         //}
 	}
 
+    private float timeStamp;
 
     void Update()
 	{
         if (Input.GetKeyUp(KeyCode.S) && !KinectInitialized) {
             StartKinect();
+        }
+
+        if (isLogging)
+        {
+                timeIncrement += Time.deltaTime;
+                seconds = timeIncrement %= 60;
+                minutes = seconds == 0 ? minutes++ : minutes;
         }
 
         if (KinectInitialized)
@@ -1635,7 +1643,7 @@ public class KinectManager : MonoBehaviour
 		if(AllPlayersCalibrated)
 		{
 			Debug.Log("All players calibrated.");
-			
+            Logger.LogData("Tracking Started at:", GetUserPosition(UserId), GetUserOrientation(UserId, false).eulerAngles, UserId, minutes + ":" + seconds);
 			if(CalibrationText != null)
 			{
 				CalibrationText.GetComponent<GUIText>().text = "";
@@ -1697,14 +1705,18 @@ public class KinectManager : MonoBehaviour
 		
 		// Try to replace that user!
 		Debug.Log("Waiting for users.");
-
-		if(CalibrationText != null)
+	    if (isLogging)
+	    {
+	       Logger.LogData("Tracking lost at:", GetUserPosition(UserId), GetUserOrientation(UserId, false).eulerAngles, UserId, minutes+":"+ seconds);
+	    }
+	    if(CalibrationText != null)
 		{
 			CalibrationText.GetComponent<GUIText>().text = "WAITING FOR USERS";
 		}
 	}
-	
-	// Some internal constants
+
+
+    // Some internal constants
 	private const int stateTracked = (int)KinectWrapper.NuiSkeletonPositionTrackingState.Tracked;
 	private const int stateNotTracked = (int)KinectWrapper.NuiSkeletonPositionTrackingState.NotTracked;
 	
@@ -1714,9 +1726,13 @@ public class KinectManager : MonoBehaviour
 		(int)KinectWrapper.NuiSkeletonPositionIndex.AnkleRight,
 		(int)KinectWrapper.NuiSkeletonPositionIndex.FootRight,
 	};
-	
-	// Process the skeleton data
-	void ProcessSkeleton()
+    public bool isLogging;
+    private float timeIncrement;
+    private float seconds;
+    private float minutes;
+
+    // Process the skeleton data
+    void ProcessSkeleton()
 	{
 		List<uint> lostUsers = new List<uint>();
 		lostUsers.AddRange(allUsers);

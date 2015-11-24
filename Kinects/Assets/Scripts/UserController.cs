@@ -15,7 +15,7 @@ public class UserController : NetworkBehaviour {
     void Start () {
         for (int i = 0; i < users.Length; i++)
         {
-            users[i] = Instantiate(prefab) as GameObject;
+            users[i] = Instantiate(prefab);
             users[i].transform.GetComponent<MeshRenderer>().material.color= RandomColor();
             //Instantiate a cube for each user tracked;
         }
