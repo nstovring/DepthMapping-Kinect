@@ -11,7 +11,11 @@ public class OffsetCalculator : NetworkBehaviour {
     private GameObject[] players;
     private float player1AngleFromKinect;
 
-	void Start () {
+    public Vector3[] oldCords;
+    public Vector3[] vel;
+    public float[] angles;
+
+    void Start () {
 	
 	}
 
@@ -80,4 +84,23 @@ public class OffsetCalculator : NetworkBehaviour {
         players[1].GetComponent<CubeController>().otherAngleFromKinect = this.player1AngleFromKinect;
     }
 
+    [Server]
+    private void MovementDiff()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++)
+        {
+            vel[i] = oldCords[i] - players[i].transform.position;
+            oldCords[i] = players[i].transform.position;
+        }
+        for (int i = 1; i < vel.Length; i++)
+        {
+            angles[i - 1] = Vector3.Angle(vel[0], vel[i]);
+            Debug.Log(angles[i - 1]);
+        }
+    }
+
 }
+
+
+
