@@ -9,7 +9,7 @@ using System.Text;
 using UnityEngine.Networking;
 
 
-public class KinectManager : MonoBehaviour
+public class KinectManager : NetworkBehaviour
 {
 	public enum Smoothing : int { None, Default, Medium, Aggressive }
 
@@ -882,9 +882,6 @@ public class KinectManager : MonoBehaviour
 
 	public void StartKinect()
 	{
-        //if (Network.isClient)
-        //{
-            //CalibrationText = GameObject.Find("CalibrationText");
             int hr = 0;
 
             try
@@ -1009,12 +1006,7 @@ public class KinectManager : MonoBehaviour
 
                 //create the transform matrix that converts from kinect-space to world-space
                 Quaternion quatTiltAngle = Quaternion.identity;
-                quatTiltAngle.eulerAngles = new Vector3(-SensorAngle, 0, 0);///(-SensorAngle, 0.0f, 0.0f);
-
-                //float heightAboveHips = SensorHeight - 1.0f;
-
-                // transform matrix - kinect to world
-                //kinectToWorld.SetTRS(new Vector3(0.0f, heightAboveHips, 0.0f), quatTiltAngle, Vector3.one);
+                quatTiltAngle.eulerAngles = new Vector3(-SensorAngle, 0, 0);
 
                 if (identity)
                 {

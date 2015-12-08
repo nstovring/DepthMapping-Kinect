@@ -7,6 +7,9 @@ using Random = UnityEngine.Random;
 
 public class CubeController : NetworkBehaviour
 {
+
+    public GameObject CalibrationUserGameObject;
+
     //Public 
     public bool MoveVertically = false;
     public bool MirroredMovement = false;

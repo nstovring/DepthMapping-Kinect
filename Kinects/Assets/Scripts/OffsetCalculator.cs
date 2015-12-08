@@ -5,8 +5,8 @@ using System;
 
 public class OffsetCalculator : NetworkBehaviour {
 
-    public Vector3 player2Offset;
-    public float player2angleOffset;
+    private Vector3 player2Offset;
+    private float player2angleOffset;
 
     private GameObject[] players;
     private float player1AngleFromKinect;
@@ -19,7 +19,7 @@ public class OffsetCalculator : NetworkBehaviour {
 	// Update is called once per frame
     [Server]
 	void Update () {
-        players = GameObject.FindGameObjectsWithTag("Player");
+        /*players = GameObject.FindGameObjectsWithTag("Player");
 
         if (this.players.Length >= 2) {
             player2Offset = players[0].transform.position - players[1].transform.position;
@@ -30,8 +30,40 @@ public class OffsetCalculator : NetworkBehaviour {
             player2angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenKinects);
             SetPositionOffset();
             SetRotationOffset();
-        }
+        }*/
 	}
+
+    public void CalculateOffset()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+
+        if (this.players.Length >= 2)
+        {
+            player2Offset = GetPositionOffset();
+            player1AngleFromKinect = Mathf.Abs(players[0].transform.GetComponent<CubeController>().angleFromKinect);
+
+            CubeController player2Controller = players[1].transform.GetComponent<CubeController>();
+
+            player2angleOffset = player1AngleFromKinect + Mathf.Abs(player2Controller.angleFromKinect) + Mathf.Abs(player2Controller.angleBetweenKinects);
+        }
+    }
+
+    public Vector3 GetPositionOffset()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+        return (players[0].transform.position - players[1].transform.position);
+    }
+
+    public Vector3 GetRotationOffset()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+        return new Vector3(
+          Vector3.Angle(players[0].transform.right,players[1].transform.right), 
+          Vector3.Angle(players[0].transform.up,players[1].transform.up),
+          Vector3.Angle(players[0].transform.forward,players[1].transform.forward));
+    }
+
+
     [Server]
     private void SetRotationOffset()
     {
