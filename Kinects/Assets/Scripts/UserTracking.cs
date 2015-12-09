@@ -8,12 +8,13 @@ public class UserTracking : MonoBehaviour {
     List<GameObject> players;
     bool Calibrated;
 
-    List<GameObject[]> calibratedPlayers;
+    List<List<GameObject>> calibratedPlayers;
 	// Use this for initialization
 	void Start () {
         Calibrated = false;
         cubes = GameObject.FindGameObjectsWithTag("Player");
         addToPlayers(cubes);
+        players = new List<GameObject>() { };
         
     }
 	
@@ -41,7 +42,9 @@ public class UserTracking : MonoBehaviour {
                 {
                     if(players[i].transform.position.magnitude - players[j].transform.position.magnitude < 0.2)
                     {
-                        GameObject[] player = new GameObject[] { players[i], players[j] };
+                        List<GameObject> player = new List<GameObject>();
+                        player.Add(players[i]);
+                        player.Add(players[j]);
                         calibratedPlayers.Add(player);
                         players.Remove(players[i]);
                         players.Remove(players[j]);
@@ -50,11 +53,46 @@ public class UserTracking : MonoBehaviour {
                 }
                 else if(players.Count == 1)
                 {
-                    GameObject[] player = new GameObject[] { players[i], players[j] };
+                    List<GameObject> player = new List<GameObject>();
+                    player.Add(players[i]);
+                    player.Add(players[j]);
                     calibratedPlayers.Add(player);
                     players.Remove(players[i]);
                     break;
                 }
+            }
+        }
+    }
+    public void checkIfUsersAreTracked()
+    {
+        int i = 0;
+        bool tracked;
+        while (i < players.Count)
+        {
+            tracked = false;
+            for (int j = 0; j < calibratedPlayers.Count; j++)
+            {
+                for(int n = 0; n < calibratedPlayers[j].Count; n++)
+                {
+                    if(players[i] == calibratedPlayers[j][n])
+                    {
+                        players.Remove(players[i]);
+                        tracked = true;
+                        break;
+                    }
+                    else if( players[i].transform.position.magnitude - calibratedPlayers[j][n].transform.position.magnitude < 0.2)
+                    {
+                        calibratedPlayers[j].Add(players[i]);
+                        players.Remove(players[i]);
+                        tracked = true;
+                        break;
+                    }
+                }
+            }
+            if (!tracked)
+            {
+                i++;
+                
             }
         }
     }
